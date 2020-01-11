@@ -5,8 +5,6 @@ package com.paulc;
 //Put in selected columns eg '(results.getString("Name"))' to reference STATIC variables
 //**************************************************************************************
 
-
- 
 import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
@@ -73,6 +71,41 @@ public class DataSource {
 
 
 
+    private static final String UPDATE_ARTIST_FIELD = "UPDATE " + TABLE_ARTISTS + " SET Name = ? WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
+
+
+/*
+     Using below, can split out into seperate functions in the class (updateTitle(), updateArtWork(), upDateLocation()) etc and do the type checking on the input
+
+        upDateAlb(String field, String newVal)
+           UPDATE Album field = newVal WHERE Album_ID = this.Album_ID;
+
+    //Catch exceptions (no such field, also need to check type of data as SQLite doesn't)
+
+         upDateAlb(String field, int newVal)
+            UPDATE Album field = newVal WHERE Album_ID = this.Album_ID;
+
+    //Catch exceptions (no such field, also need to check type of data as SQLite doesn't)
+
+ */
+
+    public void updateArtist(String oldName, String newName) {
+        try (Connection conn = this.connect()) {
+            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ARTIST_FIELD);
+            update_artist_ps.setString(1, newName);
+            update_artist_ps.setString(2, oldName);
+            update_artist_ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SQL Error in deleteArtist: " + e);
+        }
+    }
+
+
+
+
+
+
+
 
 
     private Connection connect() {
@@ -93,7 +126,7 @@ public class DataSource {
 
     public void testQuery()
     {
-        System.out.println("Query: " +AMOUNT_OF_SONGS_ON_ALBUM);
+        System.out.println("Query: " +UPDATE_ARTIST_FIELD);
     }
 
     public void deleteArtist(String artistName) {
