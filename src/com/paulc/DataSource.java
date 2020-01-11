@@ -6,7 +6,7 @@ package com.paulc;
 //**************************************************************************************
 
 
-
+ 
 import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
