@@ -1,0 +1,11 @@
+#What to limit to only source upload (stripping out all IntelliJ files)
+
+#Ignore any Java files
+*.class
+
+#Ignore any iml files
+*.iml
+
+#Ignore folder 
+out/
+.idea/
