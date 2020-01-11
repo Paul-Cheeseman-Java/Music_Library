@@ -5,6 +5,8 @@ package com.paulc;
 //Put in selected columns eg '(results.getString("Name"))' to reference STATIC variables
 //**************************************************************************************
 
+
+
 import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
