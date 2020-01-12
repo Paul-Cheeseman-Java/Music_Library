@@ -1,10 +1,16 @@
 package com.paulc;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Artist {
 
     private String name;
+
+    //Need to check for artists existence, if exists tell user and don't do anything
+
 
     public Artist(String name){
         this.name = name;
@@ -14,24 +20,12 @@ public class Artist {
         return this.name;
     }
 
+
+    /*
+        Using Foreign Key constraint 'Cascade Delete' in both Albums (FK Artist) and Song (FK Album)
+        so deleting an artist will delete all associated albums, which in turn, will delete all associated songs
+     */
     public void removeArtist(String newName){
-        /*
-            For removing artist (Delete Constraints)
-
-            Foreign Keys with Cascade Delete, delete child (have this on Artist and Album, that way it should cascade through both)
-            https://www.techonthenet.com/sqlite/foreign_keys/foreign_delete.php
-
-            Delete Artist (cascaded deletes all of below)
-            Delete Album (cascade deletes all songs)
-            Delete Song
-
-            For adding (Insert constraints)
-
-            Other constraints, song must have an Album before it can be added, Album must have Artist before it can be added
-         */
-    }
-
-    public static void artistExist(){
 
     }
 
@@ -52,21 +46,41 @@ public class Artist {
     }
 
 
-    public void listAllAlbums(){
+    public static boolean artistExist(String artistName) {
         DataSource ds = new DataSource();
-        ArrayList<Album> allTheAlbums = ds.artistsAlbums(this.getName());
-        for (Album theAlbum : allTheAlbums){
-            System.out.println(theAlbum.getName());
+        ArrayList<String> allArtistsNames = ds.listAllArtistNames();
+        boolean artistExists = false;
+        for(String artistNameInLibrary: allArtistsNames){
+            if(artistNameInLibrary.equals(artistName)){
+                artistExists = true;
+            }
         }
+        return artistExists;
     }
 
 
     public static void listAllArtists(){
         DataSource ds = new DataSource();
-        ArrayList<Artist> allTheArtists = ds.listAllArtists();
-        for (Artist theArtist : allTheArtists){
-            System.out.println(theArtist.getName());
+        ArrayList<String> allTheArtists = ds.listAllArtistNames();
+        for (String artistsName : allTheArtists){
+            System.out.println(artistsName);
         }
+    }
+
+    public static String promptForExistingArtist() {
+        String artistName = null;
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
+            System.out.println("Please enter the name of an Artist in the library: ");
+            artistName = br.readLine();
+            while(!Artist.artistExist(artistName)){
+                System.out.println(artistName + " isn't an Artist in the library, please enter the Artist in the library");
+                artistName = artistName = br.readLine();
+
+            }
+        }catch(IOException e) {
+            System.out.println("Error prompting for Artist name: " +e.getMessage());
+        }
+        return artistName;
     }
 
 

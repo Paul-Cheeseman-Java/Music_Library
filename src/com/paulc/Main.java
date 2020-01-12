@@ -6,11 +6,11 @@ public class Main {
     public static void main(String[] args) {
 	// write your code here
 
-        DataSource ds = new DataSource();
-        ds.updateArtist("Bongo Billy", "Musical Pete");
+        //DataSource ds = new DataSource();
+        //ds.updateArtist("Bongo Billy", "Musical Pete");
         //ds.updateArtist("Musical Pete", "Bongo Billy");
-        Artist test = new Artist("Musical Pete");
-        test.listAllAlbums();
+        //Artist test = new Artist("Musical Pete");
+        //test.listAllAlbums();
 
         //ds.testQuery();
         //ds.deleteArtist("Pan Pipes Percy");
@@ -21,10 +21,11 @@ public class Main {
         //test.listAllAlbums();
         //Artist.listAllArtists();
 
-        //Album test = new Album("Music Man - Album 2");
-        //Album test = new Album("Pan Pipes Percy - Album 1");
-        //test.amountOfSongs();
-        //test.listAllSongs();
+        //System.out.println(Artist.artistExist("Musical Pete\"));
+        //Album test = new Album("Percy", "Percy the ledg", "C:");
+
+        //Artist.promptForExistingArtist();
+        Album.promptForExistingAlbum();
 
 
     }

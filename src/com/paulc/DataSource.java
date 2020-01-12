@@ -44,6 +44,9 @@ public class DataSource {
     private static final String LIST_ALL_ARTISTS = "SELECT " + COLUMN_ARTISTS_ARTIST_NAME + " FROM " +
             TABLE_ARTISTS;
 
+    private static final String LIST_ALL_ALBUMS = "SELECT " + COLUMN_ALBUMS_TITLE + " FROM " +
+            TABLE_ALBUMS;
+
     private static final String DELETE_ARTIST = "DELETE FROM " + TABLE_ARTISTS + " WHERE " + COLUMN_ARTISTS_ARTIST_NAME + "= ?";
 
 
@@ -74,40 +77,6 @@ public class DataSource {
     private static final String UPDATE_ARTIST_FIELD = "UPDATE " + TABLE_ARTISTS + " SET Name = ? WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
 
 
-/*
-     Using below, can split out into seperate functions in the class (updateTitle(), updateArtWork(), upDateLocation()) etc and do the type checking on the input
-
-        upDateAlb(String field, String newVal)
-           UPDATE Album field = newVal WHERE Album_ID = this.Album_ID;
-
-    //Catch exceptions (no such field, also need to check type of data as SQLite doesn't)
-
-         upDateAlb(String field, int newVal)
-            UPDATE Album field = newVal WHERE Album_ID = this.Album_ID;
-
-    //Catch exceptions (no such field, also need to check type of data as SQLite doesn't)
-
- */
-
-    public void updateArtist(String oldName, String newName) {
-        try (Connection conn = this.connect()) {
-            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ARTIST_FIELD);
-            update_artist_ps.setString(1, newName);
-            update_artist_ps.setString(2, oldName);
-            update_artist_ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("SQL Error in deleteArtist: " + e);
-        }
-    }
-
-
-
-
-
-
-
-
-
     private Connection connect() {
         // SQLite connection string
         String url = CONNECTION_STRING;
@@ -122,12 +91,35 @@ public class DataSource {
         }
         return conn;
     }
-
-
     public void testQuery()
     {
         System.out.println("Query: " +UPDATE_ARTIST_FIELD);
     }
+
+
+    public void updateArtist(String oldName, String newName) {
+        try (Connection conn = this.connect()) {
+            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ARTIST_FIELD);
+            update_artist_ps.setString(1, newName);
+            update_artist_ps.setString(2, oldName);
+            update_artist_ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SQL Error in deleteArtist: " + e);
+        }
+    }
+
+
+    public void updateAlbum(String oldName, String newName) {
+        try (Connection conn = this.connect()) {
+            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ARTIST_FIELD);
+            update_artist_ps.setString(1, newName);
+            update_artist_ps.setString(2, oldName);
+            update_artist_ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SQL Error in deleteArtist: " + e);
+        }
+    }
+
 
     public void deleteArtist(String artistName) {
         try (Connection conn = this.connect()) {
@@ -199,8 +191,10 @@ public class DataSource {
             list_artist_albums_ps.setString(1, artistName);
             ResultSet results = list_artist_albums_ps.executeQuery();
             while (results.next()) {
-                albumsOfArtist.add(new Album(results.getString("Title")));
-                //System.out.println("Title: "+ results.getString("Title"));
+                albumsOfArtist.add(new Album(results.getInt("Artist_ID"),
+                        results.getString("Title"),
+                        results.getBlob("Album_Artwork"),
+                        results.getString("Location")));
             }
         } catch (SQLException e) {
             System.out.println("SQL Error in artistsAlbums: " + e);
@@ -209,14 +203,14 @@ public class DataSource {
     }
 
 
-    public ArrayList<Artist> listAllArtists() {
-        ArrayList<Artist> allArtists = new ArrayList<>();
+    public ArrayList<String> listAllArtistNames() {
+        ArrayList<String> allArtists = new ArrayList<>();
         try (Connection conn = this.connect())
         {
             PreparedStatement list_all_artists_ps = conn.prepareStatement(LIST_ALL_ARTISTS);
             ResultSet results = list_all_artists_ps.executeQuery();
             while (results.next()) {
-                allArtists.add(new Artist(results.getString("Name")));
+                allArtists.add(results.getString("Name"));
                 //System.out.println(results.getString("Name"));
             }
         } catch (SQLException e) {
@@ -224,6 +218,29 @@ public class DataSource {
         }
         return allArtists;
     }
+
+
+    public ArrayList<String> listAllAlbumNames() {
+        ArrayList<String> allAlbumNames = new ArrayList<>();
+        try (Connection conn = this.connect())
+        {
+            PreparedStatement list_all_albums_ps = conn.prepareStatement(LIST_ALL_ALBUMS);
+            ResultSet results = list_all_albums_ps.executeQuery();
+            while (results.next()) {
+                allAlbumNames.add(results.getString("Title"));
+                //System.out.println(results.getString("Name"));
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Error in listAllArtists: " + e);
+        }
+        return allAlbumNames;
+    }
+
+
+
+
+
+
 
 
     public ArrayList<Song> albumSongs(String albumName) {
