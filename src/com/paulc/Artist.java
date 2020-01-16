@@ -9,9 +9,6 @@ public class Artist {
 
     private String name;
 
-    //Need to check for artists existence, if exists tell user and don't do anything
-
-
     public Artist(String name){
         this.name = name;
     }
@@ -21,29 +18,49 @@ public class Artist {
     }
 
 
-    /*
-        Using Foreign Key constraint 'Cascade Delete' in both Albums (FK Artist) and Song (FK Album)
-        so deleting an artist will delete all associated albums, which in turn, will delete all associated songs
-     */
-    public void removeArtist(String newName){
-
+    public void removeArtist(String artistName){
+        DataSource ds = new DataSource();
+        ds.deleteArtist(artistName);
     }
-
 
     public static void addArtist(){
-        //Datastore
-        //Check is valid (it DOESN'T exist in DB) - ACTUALLY just report on NON-null returned value IS present
-        //Add to DB - return message that update successful? (update method returns boolean?)
-        //************************************************************************************
-        //Need to ensure that Artist is added with an Album and that Album is added with Songs
-        //************************************************************************************
+        DataSource ds = new DataSource();
+        ds.insertArtist(Artist.promptForNewArtist());
     }
 
-    public void updateArtist(){
-        //Datastore
-        //Check is valid (it DOESN'T exist in DB) - ACTUALLY just report on null returned value as not present
-        //Update
+    public void updateArtistName(String newName){
+        if (Artist.artistExist(newName)){
+            System.out.println(newName + " is already in the library");
+        } else {
+            DataSource ds = new DataSource();
+            ds.updateArtist(this.getName(), newName);
+        }
     }
+
+
+    public static int artistNameToArtistID(String artistName){
+        DataSource ds = new DataSource();
+        int artistID = ds.artistNameToArtistID(artistName);
+        return artistID;
+    }
+
+
+    public static String promptForNewArtist() {
+        String artistName = null;
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
+            System.out.println("Please enter the name of an Artist in the library: ");
+            artistName = br.readLine();
+            while(Artist.artistExist(artistName)){
+                System.out.println(artistName + " is already the library, please enter a new Artist");
+                artistName = br.readLine();
+
+            }
+        }catch(IOException e) {
+            System.out.println("Error prompting for Artist new name: " +e.getMessage());
+        }
+        return artistName;
+    }
+
 
 
     public static boolean artistExist(String artistName) {
@@ -67,6 +84,7 @@ public class Artist {
         }
     }
 
+
     public static String promptForExistingArtist() {
         String artistName = null;
         try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
@@ -83,5 +101,10 @@ public class Artist {
         return artistName;
     }
 
+
+    public int amountOfAlbums(){
+        DataSource ds = new DataSource();
+        return ds.amountOfAlbumsArtistHas(this.name);
+    }
 
 }
