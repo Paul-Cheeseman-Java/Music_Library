@@ -132,7 +132,7 @@ public class Application {
                         int artistID = Album.addAlbum(Artist.addArtistReturnID());
                         songName = Song.promptForNewSong();
                         while(!songName.equals("")){
-                            Song.addSong(artistID);
+                            Song.addSong(artistID, songName);
                             songName = Song.promptForNewSong();
                         }
                         break;
@@ -140,12 +140,12 @@ public class Application {
                         albumID = Album.addAlbum(Artist.returnExistingArtistID());
                         songName = Song.promptForNewSong();
                         while(!songName.equals("")){
-                            Song.addSong(albumID);
+                            Song.addSong(albumID, songName);
                             songName = Song.promptForNewSong();
                         }
                         break;
                     case 3:
-                        Song.addSong(Album.getAlbumIDFromName());
+                        Song.addSong(Album.getAlbumIDFromName(), Song.promptForNewSong());
                         break;
                 }
             }

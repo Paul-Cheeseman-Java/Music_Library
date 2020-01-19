@@ -124,8 +124,7 @@ public class Song {
 
 
 
-    public static void addSong(int albumID){
-        String songTitle = Song.promptForNewSong();
+    public static void addSong(int albumID, String songTitle){
         DataSource ds = new DataSource();
         ds.insertSong(albumID, songTitle);
     }
