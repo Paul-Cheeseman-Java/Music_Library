@@ -38,10 +38,9 @@ public class Application {
                 System.out.println("    ------  Music Library  -------");
                 System.out.println("    ------------------------------");
                 System.out.println("    1 - List information from library");
-                System.out.println("    2 - Search library");
-                System.out.println("    3 - Add information to library");
-                System.out.println("    4 - Update information in library");
-                System.out.println("    5 - Remove information from library");
+                System.out.println("    2 - Add information to library");
+                System.out.println("    3 - Update information in library");
+                System.out.println("    4 - Remove information from library");
                 System.out.println("    0 - Exit ");
                 System.out.println("    ------------------------------");
                 System.out.println("  ");
@@ -54,18 +53,14 @@ public class Application {
                         mainMenuControl=0;
                         break;
                     case 2:
-                        Application.searchMenu();
-                        mainMenuControl=0;
-                        break;
-                    case 3:
                         Application.addMenu();
                         mainMenuControl=0;
                         break;
-                    case 4:
+                    case 3:
                         Application.updateMenu();
                         mainMenuControl=0;
                         break;
-                    case 5:
+                    case 4:
                         Application.RemoveMenu();
                         mainMenuControl=0;
                         break;
@@ -116,43 +111,6 @@ public class Application {
         }
     }
 
-    private static void searchMenu(){
-        /*
-            Simple msg, artist/album/song in db
-        */
-        int searchMenuControl = 1;
-        try{
-            while(searchMenuControl > 0) {
-                System.out.println("    ------------------------------");
-                System.out.println("    ------  Search Options  ------");
-                System.out.println("    ------------------------------");
-                System.out.println("    1 - Search for artist");
-                System.out.println("    2 - Search for an album");
-                System.out.println("    3 - Search for song");
-                System.out.println("    0 - Main Menu ");
-                System.out.println("    ------------------------------");
-                System.out.println("  ");
-
-                System.out.println("Enter your choice ");
-                Scanner sc = new Scanner(System.in);
-                searchMenuControl = sc.nextInt();
-                switch (searchMenuControl){
-                    case 1:
-                        System.out.println("Option 1 (Search for artist) selected ");;
-                        break;
-                    case 2:
-                        System.out.println("Option 2 (Search for an album) selected ");;
-                        break;
-                    case 3:
-                        System.out.println("Option 3 (Search for song) selected ");;
-                        break;
-                }
-            }
-            Application.mainMenu();
-        } catch (InputMismatchException exception) {
-            Application.searchMenu();
-        }
-    }
 
     private static void addMenu(){
         int addMenuControl = 1;
@@ -243,6 +201,8 @@ public class Application {
 
     private static void RemoveMenu(){
     /*
+        ALL THESE ARE DEPENDANT ON THE FOREIGN KEY CONSTRAINTS IN SQLITE - ENSURE REQUIREMENT APPLIED ON EACH DB CREATION
+
         Remove artist, remove album(s) (loop), remove song(s)
         Remove album, remove songs (loop), if last album for artist, remove artist
         Remove song, if last song remove album, if last album remove artist
