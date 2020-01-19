@@ -27,6 +27,36 @@ public class Artist {
         ds.deleteArtist(artistName);
     }
 
+    public static void listArtistsAlbums(){
+        DataSource ds = new DataSource();
+        String artist = Artist.promptForExistingArtist();
+        ArrayList<Album> artistsAlbums = ds.artistsAlbums(artist);
+        if (artistsAlbums.isEmpty()){
+            System.out.println("Artist: " + artist + " doesn't have any albums in the library");
+        } else {
+            System.out.println("Artist: " + artist + " has the following Albums");
+            for(Album album: artistsAlbums) {
+                System.out.println(album.getTitle());
+            }
+        }
+    }
+
+
+    public static void listArtistsAlbumsAndSongs(){
+        DataSource ds = new DataSource();
+        String artist = Artist.promptForExistingArtist();
+        ArrayList<Album> artistsAlbums = ds.artistsAlbums(artist);
+        if (artistsAlbums.isEmpty()){
+            System.out.println("Artist: " + artist + " doesn't have any albums in the library");
+        } else {
+            System.out.println("Artist: " + artist + " has the following Albums:");
+            for(Album album: artistsAlbums) {
+                System.out.println("        Album " + album.getTitle() + " has the following songs:");
+                album.listAllSongs();
+            }
+        }
+    }
+
     public static int addArtistReturnID(){
         DataSource ds = new DataSource();
         int generatedKey = ds.insertArtist(Artist.promptForNewArtist());

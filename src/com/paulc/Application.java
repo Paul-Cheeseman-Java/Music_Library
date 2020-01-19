@@ -21,14 +21,11 @@ public class Application {
         //A method to load in data???
     }
 
-
-
     public static void start(){
         //separate incase more initialization code required in future,
         Application.mainMenu();
 
     }
-
 
     private static void mainMenu(){
         int mainMenuControl = 1;
@@ -95,13 +92,13 @@ public class Application {
                 listMenuControl = sc.nextInt();
                 switch (listMenuControl){
                     case 1:
-                        System.out.println("Option 1 (List all artists) selected ");;
+                        Artist.listAllArtists();
                         break;
                     case 2:
-                        System.out.println("Option 2 (List all albums by an artist) selected ");;
+                        Artist.listArtistsAlbums();
                         break;
                     case 3:
-                        System.out.println("Option 3 (List albums and songs by an artist) selected ");;
+                        Artist.listArtistsAlbumsAndSongs();
                         break;
                 }
             }

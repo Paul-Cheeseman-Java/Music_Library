@@ -50,7 +50,8 @@ public class DataSource {
 
     private static final String DELETE_SONG = "DELETE FROM " + TABLE_SONGS + " WHERE " + COLUMN_SONGS_TITLE + "= ?";
 
-    private static final String LIST_ARTIST_ALBUMS = "SELECT " + TABLE_ALBUMS + "." + COLUMN_ALBUMS_TITLE + " FROM " +
+    private static final String LIST_ARTIST_ALBUMS = "SELECT " + TABLE_ALBUMS + "." + COLUMN_ALBUMS_ALBUM_ID + ", " +
+            TABLE_ALBUMS + "." + COLUMN_ALBUMS_TITLE + ", " +  TABLE_ALBUMS + "." + COLUMN_ALBUMS_LOCATION + " FROM " +
             TABLE_ALBUMS + " INNER JOIN " + TABLE_ARTISTS + " ON " + TABLE_ARTISTS + "." +
             COLUMN_ARTISTS_ARTIST_ID + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUMS_ARTIST_ID + " WHERE " +
             TABLE_ARTISTS + "." + COLUMN_ARTISTS_ARTIST_NAME + "= ?";
@@ -120,7 +121,7 @@ public class DataSource {
 
     public void testQuery()
     {
-        System.out.println("Query: " + GET_SPECIFIC_ARTIST_RECORD);
+        System.out.println("Query: " + LIST_ARTIST_ALBUMS);
     }
 
     //A helper method
@@ -309,7 +310,7 @@ public class DataSource {
             list_artist_albums_ps.setString(1, artistName);
             ResultSet results = list_artist_albums_ps.executeQuery();
             while (results.next()) {
-                albumsOfArtist.add(new Album(results.getInt("Artist_ID"),
+                albumsOfArtist.add(new Album(results.getInt("Album_ID"),
                         results.getString("Title"),
                         results.getString("Location")));
             }
@@ -381,9 +382,7 @@ public class DataSource {
                 songsOfAlbum.add(new Song(
                         results.getInt("Song_ID"),
                         results.getInt("Album_ID"),
-                        results.getString("Title"),
-                        results.getInt("Track_Number"),
-                        results.getInt("Duration")
+                        results.getString("Title")
                         ));
                 /*
                 System.out.println("Song_ID: "+ results.getString("Song_ID"));

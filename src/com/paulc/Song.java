@@ -7,12 +7,10 @@ import java.util.ArrayList;
 
 public class Song {
 
-    public Song(int song_ID, int album_ID, String title, int track_number, int duration) {
+    public Song(int song_ID, int album_ID, String title) {
         this.song_ID = song_ID;
         this.album_ID = album_ID;
         this.title = title;
-        this.track_number = track_number;
-        this.duration = duration;
     }
 
     //timestamp? getDuration() //Put length into DB in seconds, when calc in method
@@ -20,8 +18,6 @@ public class Song {
     private int song_ID;
     private int album_ID;
     private String title;
-    private int track_number;
-    private int duration;
 
     //close this when app closes??
     //Stream Reader for class
@@ -50,22 +46,6 @@ public class Song {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getTrack_number() {
-        return track_number;
-    }
-
-    public void setTrack_number(int track_number) {
-        this.track_number = track_number;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     public static void removeSong(){

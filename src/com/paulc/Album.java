@@ -222,12 +222,7 @@ public class Album {
         DataSource ds = new DataSource();
         ArrayList<Song> allTheSongs = ds.albumSongs(this.title);
         for (Song theSong : allTheSongs){
-            System.out.println(theSong.getTitle());
-            System.out.println("    - Song_ID: " + theSong.getSong_ID());
-            System.out.println("    - Album_ID: " + theSong.getAlbum_ID());
-            System.out.println("    - Title: " + theSong.getTitle());
-            System.out.println("    - Track No.: " + theSong.getTrack_number());
-            System.out.println("    - Duration: " + theSong.getDuration());
+            System.out.println("              Song: " + theSong.getTitle());
         }
     }
 

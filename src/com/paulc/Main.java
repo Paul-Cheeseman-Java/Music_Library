@@ -7,5 +7,9 @@ public class Main {
 	// write your code here
         //Application.start();
 
+
+        DataSource ds = new DataSource();
+        //ds.testQuery();
+        Artist.listArtistsAlbumsAndSongs();
     }
 }
