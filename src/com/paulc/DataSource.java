@@ -69,7 +69,9 @@ public class DataSource {
             TABLE_ALBUMS + "." + COLUMN_ALBUMS_ARTIST_ID + " WHERE " + TABLE_ARTISTS + "." + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
 
 
-    private static final String UPDATE_ARTIST_FIELD = "UPDATE " + TABLE_ARTISTS + " SET Name = ? WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
+    private static final String UPDATE_ARTIST = "UPDATE " + TABLE_ARTISTS + " SET Name = ? WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
+
+
 
     private static final String INSERT_ARTIST = "INSERT INTO " + TABLE_ARTISTS + "(" + COLUMN_ARTISTS_ARTIST_NAME + ") VALUES(?)";
 
@@ -85,11 +87,41 @@ public class DataSource {
     private static final String GET_SPECIFIC_ALBUM_RECORD = "SELECT " + COLUMN_ALBUMS_ALBUM_ID + " FROM " + TABLE_ALBUMS +
             " WHERE " + COLUMN_ALBUMS_TITLE + " = ?";;
 
+
+    private static final String UPDATE_ALBUM = "UPDATE " + TABLE_ALBUMS + " SET Title = ?, Location = ? WHERE " + COLUMN_ALBUMS_TITLE + " = ?";
+
+    private static final String UPDATE_SONG = "UPDATE " + TABLE_SONGS + " SET Title = ? WHERE " + COLUMN_SONGS_TITLE + " = ?";
+
+
+
+    public void updateSong(String oldTitle, String newTitle) {
+        try (Connection conn = this.connect()) {
+            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_SONG);
+            update_artist_ps.setString(1, newTitle);
+            update_artist_ps.setString(2, oldTitle);
+            update_artist_ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SQL Error in updateSong: " + e);
+        }
+    }
+
+
+    public void updateAlbum(String oldTitle, String newTitle, String newLocation) {
+        try (Connection conn = this.connect()) {
+            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ALBUM);
+            update_artist_ps.setString(1, newTitle);
+            update_artist_ps.setString(2, newLocation);
+            update_artist_ps.setString(3, oldTitle);
+            update_artist_ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SQL Error in updateAlbum: " + e);
+        }
+    }
+
     public void testQuery()
     {
         System.out.println("Query: " + GET_SPECIFIC_ARTIST_RECORD);
     }
-
 
     //A helper method
     public int albumNameToArtistID(String albumName) {
@@ -138,7 +170,7 @@ public class DataSource {
 
     public void updateArtist(String currentName, String newName) {
         try (Connection conn = this.connect()) {
-            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ARTIST_FIELD);
+            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ARTIST);
             update_artist_ps.setString(1, newName);
             update_artist_ps.setString(2, currentName);
             update_artist_ps.executeUpdate();
@@ -148,16 +180,7 @@ public class DataSource {
     }
 
 
-    public void updateAlbum(String oldName, String newName) {
-        try (Connection conn = this.connect()) {
-            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ARTIST_FIELD);
-            update_artist_ps.setString(1, newName);
-            update_artist_ps.setString(2, oldName);
-            update_artist_ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("SQL Error in deleteArtist: " + e);
-        }
-    }
+
 
 
     public int insertArtist(String artistName) {

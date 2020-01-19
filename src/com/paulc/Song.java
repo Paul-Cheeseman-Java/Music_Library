@@ -68,7 +68,11 @@ public class Song {
         this.duration = duration;
     }
 
-
+    public static void removeSong(){
+        String songName = Song.promptForExistingSong();
+        DataSource ds = new DataSource();
+        ds.deleteSong(songName);
+    }
 
     //Validation method as validation could/should be more in-depth and this would allow easy changes
     //Just example tests
@@ -79,7 +83,7 @@ public class Song {
 
     //Songs not tested to be unique as it is will be tied to an unique album, and its unlikely
     //for an artist to release 2 songs with the same title on the same album.
-    public static String promptForSong() {
+    public static String promptForNewSong() {
         String songName = null;
         try{
             System.out.println("Please enter the name of song (or hit return to exit): ");
@@ -98,7 +102,50 @@ public class Song {
         return songName;
     }
 
-    public static void addSong(String songTitle, int albumID){
+
+
+    public static boolean songExist(String songName) {
+        DataSource ds = new DataSource();
+        ArrayList<String> allSongNames = ds.listAllSongNames();
+        boolean songExists = false;
+        for(String songNameInLibrary: allSongNames){
+            if(songNameInLibrary.equals(songName)){
+                songExists = true;
+            }
+        }
+        return songExists;
+    }
+
+    public static String promptForExistingSong() {
+        String songName = null;
+        try{
+            System.out.println("Please enter the name of song: ");
+            songName = br.readLine();
+            while(!Song.songExist(songName)){
+                System.out.println("'" + songName + "' is not in the library, please enter an song in the library:");
+                songName = br.readLine();
+            }
+        }catch(IOException e) {
+            System.out.println("Error prompting for Song name: " +e.getMessage());
+        }
+        return songName;
+    }
+
+
+    public static void updateSong(){
+        String oldTitle = Song.promptForExistingSong();
+        String newTitle = Song.promptForNewSong();
+        if ((newTitle.equals("") || newTitle.equals(" ") || newTitle.equals("  ") || newTitle.contains("   "))){
+            newTitle = oldTitle;
+        }
+        DataSource ds = new DataSource();
+        ds.updateSong(oldTitle, newTitle);
+    }
+
+
+
+    public static void addSong(int albumID){
+        String songTitle = Song.promptForNewSong();
         DataSource ds = new DataSource();
         ds.insertSong(albumID, songTitle);
     }

@@ -73,12 +73,10 @@ public class Album {
         }
     }
 
-
-
-    public static void updateAlbum(Album album){
-        String newTitle = Album.promptForExistingAlbumTitle();
-        String newLocation = Album.promptForExistingLocation();
-        System.out.println("Into DB: " + newTitle + ", location: " +newLocation);
+    public static void removeAlbum(){
+        String albumName = Album.promptForExistingAlbumTitle();
+        DataSource ds = new DataSource();
+        ds.deleteAlbum(albumName);
     }
 
 
@@ -95,10 +93,12 @@ public class Album {
         return newAlbumDBKey;
     }
 
-    public static void addExistingAlbum(){
-        String existingTitle = Album.promptForExistingAlbumTitle();
-        String existingLocation = Album.promptForNewLocation();
-        System.out.println("Into DB: " + existingTitle + ", location: " +existingLocation);
+    public static void updateAlbum(){
+        String oldTitle = Album.promptForExistingAlbumTitle();
+        String newTitle = Album.promptForExistingAlbumTitle();
+        String newLocation = Album.promptForNewLocation();
+        DataSource ds = new DataSource();
+        ds.updateAlbum(oldTitle, newTitle, newLocation);
     }
 
 
@@ -120,7 +120,7 @@ public class Album {
             albumName = br.readLine();
             //Check for album existence before creating
             while(!Album.albumExist(albumName)){
-                System.out.println(albumName + " is not in the library, please enter an album in the library:");
+                System.out.println("'" + albumName + "' is not in the library, please enter an album in the library:");
                 albumName = br.readLine();
                 //Get valid input if first album input existed
             }
@@ -145,12 +145,12 @@ public class Album {
             }
             //Check for album existence before creating
             while(Album.albumExist(albumName)){
-                System.out.println(albumName + " is already in the library, please enter a valid album name:");
+                System.out.println("'" + albumName + "' is already in the library, please enter a valid album name:");
                 albumName = br.readLine();
 
                 //Get valid input if first album input existed
                 while(!Album.albumPromptInputValid(albumName)){
-                    System.out.println("Please enter  a valid title for the new/updated Album: ");
+                    System.out.println("Please enter a valid title for the new/updated Album: ");
                     albumName = br.readLine();
                }
             }

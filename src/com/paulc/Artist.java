@@ -21,7 +21,8 @@ public class Artist {
     //Stream Reader for class
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public static void removeArtist(String artistName){
+    public static void removeArtist(){
+        String artistName = Artist.promptForExistingArtist();
         DataSource ds = new DataSource();
         ds.deleteArtist(artistName);
     }
@@ -38,12 +39,14 @@ public class Artist {
     }
 
 
-    public void updateArtistName(String newName){
+    public static void updateArtist(){
+        String currentName = Artist.promptForExistingArtist();
+        String newName = Artist.promptForNewArtist();
         if (Artist.artistExist(newName)){
-            System.out.println(newName + " is already in the library");
+            System.out.println("'" + newName + "' is already in the library");
         } else {
             DataSource ds = new DataSource();
-            ds.updateArtist(this.getName(), newName);
+            ds.updateArtist(currentName, newName);
         }
     }
 
@@ -64,7 +67,7 @@ public class Artist {
     public static String promptForNewArtist() {
         String artistName = null;
         try{
-            System.out.println("Please enter the name of the Artist: ");
+            System.out.println("Please enter the name of the new Artist: ");
             artistName = br.readLine();
 
             while(!Artist.artistPromptInputValid(artistName)){
@@ -73,9 +76,8 @@ public class Artist {
             }
             if (Artist.artistExist(artistName)){
                 while(Artist.artistExist(artistName)){
-                    System.out.println(artistName + " is already the library, please enter a new Artist");
+                    System.out.println("'" + artistName + "' is already the library, please enter a new Artist");
                     artistName = br.readLine();
-
                 }
             }
         }catch(IOException e) {
@@ -111,10 +113,10 @@ public class Artist {
     public static String promptForExistingArtist() {
         String artistName = null;
         try{
-            System.out.println("Please enter the name of the Artist: ");
+            System.out.println("Please enter the name of an Artist in the library: ");
             artistName = br.readLine();
             while(!Artist.artistExist(artistName)){
-                System.out.println(artistName + " isn't an Artist in the library, please enter the Artist in the library");
+                System.out.println("'" + artistName + "' isn't an Artist in the library, please enter an Artist in the library");
                 artistName = artistName = br.readLine();
 
             }

@@ -125,32 +125,30 @@ public class Application {
                 System.out.println("    0 - Main Menu ");
                 System.out.println("    ------------------------------");
                 System.out.println("  ");
-
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
                 addMenuControl = sc.nextInt();
-
                 String songName = "";
                 int albumID = 0;
                 switch (addMenuControl){
                     case 1:
                         int artistID = Album.addAlbum(Artist.addArtistReturnID());
-                        songName = Song.promptForSong();
+                        songName = Song.promptForNewSong();
                         while(!songName.equals("")){
-                            Song.addSong(songName, artistID);
-                            songName = Song.promptForSong();
+                            Song.addSong(artistID);
+                            songName = Song.promptForNewSong();
                         }
                         break;
                     case 2:
                         albumID = Album.addAlbum(Artist.returnExistingArtistID());
-                        songName = Song.promptForSong();
+                        songName = Song.promptForNewSong();
                         while(!songName.equals("")){
-                            Song.addSong(songName, albumID);
-                            songName = Song.promptForSong();
+                            Song.addSong(albumID);
+                            songName = Song.promptForNewSong();
                         }
                         break;
                     case 3:
-                        Song.addSong(Song.promptForSong(), Album.getAlbumIDFromName());
+                        Song.addSong(Album.getAlbumIDFromName());
                         break;
                 }
             }
@@ -161,9 +159,6 @@ public class Application {
     }
 
     private static void updateMenu(){
-        /*
-            Just direct update to specific element
-        */
         int updateMenuControl = 1;
         try{
             while(updateMenuControl > 0) {
@@ -182,13 +177,13 @@ public class Application {
                 updateMenuControl = sc.nextInt();
                 switch (updateMenuControl){
                     case 1:
-                        System.out.println("Option 1 (Update artist info) selected ");;
+                        Artist.updateArtist();
                         break;
                     case 2:
-                        System.out.println("Option 2 (Update album info) selected ");;
+                        Album.updateAlbum();
                         break;
                     case 3:
-                        System.out.println("Option 3 (Update song info) selected ");;
+                        Song.updateSong();
                         break;
                 }
             }
@@ -200,16 +195,6 @@ public class Application {
 
 
     private static void RemoveMenu(){
-    /*
-        ALL THESE ARE DEPENDANT ON THE FOREIGN KEY CONSTRAINTS IN SQLITE - ENSURE REQUIREMENT APPLIED ON EACH DB CREATION
-
-        Remove artist, remove album(s) (loop), remove song(s)
-        Remove album, remove songs (loop), if last album for artist, remove artist
-        Remove song, if last song remove album, if last album remove artist
-            - Song.onWhichAlbum()
-            - Album.byWhichArtist()
-     */
-
         int removeMenuControl = 1;
         try{
             while(removeMenuControl > 0) {
@@ -222,19 +207,18 @@ public class Application {
                 System.out.println("    0 - Main Menu ");
                 System.out.println("    ------------------------------");
                 System.out.println("  ");
-
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
                 removeMenuControl = sc.nextInt();
                 switch (removeMenuControl){
                     case 1:
-                        System.out.println("Option 1 (Remove an artist) selected ");;
+                        Artist.removeArtist();
                         break;
                     case 2:
-                        System.out.println("Option 2 (Remove an album) selected ");;
+                        Album.removeAlbum();
                         break;
                     case 3:
-                        System.out.println("Option 3 (Remove a song) selected ");;
+                        Song.removeSong();
                         break;
                 }
             }
