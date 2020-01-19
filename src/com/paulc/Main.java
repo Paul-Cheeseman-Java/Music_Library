@@ -7,6 +7,7 @@ public class Main {
 	// write your code here
         //Album.addExistingAlbum();
         //Album.promptForNewAlbumTitle();
-        Song.promptForExistingSong();
+        //Song.promptForExistingSong();
+        Application.start();
     }
 }
