@@ -21,7 +21,7 @@ public class Artist {
     //Stream Reader for class
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public void removeArtist(String artistName){
+    public static void removeArtist(String artistName){
         DataSource ds = new DataSource();
         ds.deleteArtist(artistName);
     }
@@ -71,8 +71,6 @@ public class Artist {
                 System.out.println("Please enter a valid name for the Artist: ");
                 artistName = br.readLine();
             }
-
-
             if (Artist.artistExist(artistName)){
                 while(Artist.artistExist(artistName)){
                     System.out.println(artistName + " is already the library, please enter a new Artist");
