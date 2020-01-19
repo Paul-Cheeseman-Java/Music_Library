@@ -35,8 +35,6 @@ public class DataSource {
     private static final String TABLE_SONGS = "Songs";
     private static final String COLUMN_SONGS_ALBUM_ID = "Album_ID";
     private static final String COLUMN_SONGS_TITLE = "Title";
-    private static final String COLUMN_SONGS_TRACK_NUMBER = "Track_Number";
-    private static final String COLUMN_SONGS_DURATION = "Duration";
 
 
     private static final String LIST_ALL_ARTISTS = "SELECT " + COLUMN_ARTISTS_ARTIST_NAME + " FROM " + TABLE_ARTISTS;
@@ -79,16 +77,33 @@ public class DataSource {
             COLUMN_ALBUMS_TITLE +  ", " + COLUMN_ALBUMS_LOCATION + ") VALUES(?, ?, ?)";
 
     private static final String INSERT_SONG = "INSERT INTO " + TABLE_SONGS + "(" + COLUMN_SONGS_ALBUM_ID + ", " +
-            COLUMN_SONGS_TITLE + ", " + COLUMN_SONGS_TRACK_NUMBER +", " + COLUMN_SONGS_DURATION + ") VALUES(?, ?, ?)";
+            COLUMN_SONGS_TITLE + ") VALUES(?, ?)";
 
    private static final String GET_SPECIFIC_ARTIST_RECORD = "SELECT " + COLUMN_ARTISTS_ARTIST_ID + " FROM " + TABLE_ARTISTS +
             " WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";;
 
+    private static final String GET_SPECIFIC_ALBUM_RECORD = "SELECT " + COLUMN_ALBUMS_ALBUM_ID + " FROM " + TABLE_ALBUMS +
+            " WHERE " + COLUMN_ALBUMS_TITLE + " = ?";;
+
     public void testQuery()
     {
-        System.out.println("Query: " +GET_SPECIFIC_ARTIST_RECORD);
+        System.out.println("Query: " + GET_SPECIFIC_ARTIST_RECORD);
     }
 
+
+    //A helper method
+    public int albumNameToArtistID(String albumName) {
+        int albumID = 0;;
+        try (Connection conn = this.connect()) {
+            PreparedStatement album_Name_To_AlbumID_ps = conn.prepareStatement(GET_SPECIFIC_ALBUM_RECORD);
+            album_Name_To_AlbumID_ps.setString(1, albumName);
+            ResultSet results = album_Name_To_AlbumID_ps.executeQuery();
+            albumID = results.getInt(1);
+        } catch (SQLException e) {
+            System.out.println("SQL Error in albumNameToAlbumID: " + e);
+        }
+        return albumID;
+    }
 
     //A helper method
     public int artistNameToArtistID(String artistName) {
@@ -145,35 +160,58 @@ public class DataSource {
     }
 
 
-    public void insertArtist(String artistName) {
+    public int insertArtist(String artistName) {
+        int generatedKey = 0;
         try (Connection conn = this.connect()) {
-            PreparedStatement insert_artist_ps = conn.prepareStatement(INSERT_ARTIST);
+            PreparedStatement insert_artist_ps = conn.prepareStatement(INSERT_ARTIST, Statement.RETURN_GENERATED_KEYS);
             insert_artist_ps.setString(1, artistName);
             insert_artist_ps.executeUpdate();
+
+            ResultSet keys_rs = insert_artist_ps.getGeneratedKeys();
+            if (keys_rs.next()) {
+                generatedKey = keys_rs.getInt(1);
+            }
+
+            //System.out.println("Inserted record's ID: " + generatedKey);
+
+
         } catch (SQLException e) {
             System.out.println("SQL Error in deleteArtist: " + e);
         }
+        return generatedKey;
     }
 
-    public void insertAlbum(String artist_ID, String albumTitle, String albumLocation) {
+    public int insertAlbum(int artist_ID, String albumTitle, String albumLocation) {
+        int generatedKey = 0;
         try (Connection conn = this.connect()) {
             PreparedStatement insert_album_ps = conn.prepareStatement(INSERT_ALBUM);
-            insert_album_ps.setString(1, artist_ID);
+            insert_album_ps.setInt(1, artist_ID);
             insert_album_ps.setString(2, albumTitle);
             insert_album_ps.setString(3, albumLocation);
             insert_album_ps.executeUpdate();
+
+            ResultSet keys_rs = insert_album_ps.getGeneratedKeys();
+            if (keys_rs.next()) {
+                generatedKey = keys_rs.getInt(1);
+            }
+
+
         } catch (SQLException e) {
-            System.out.println("SQL Error in deleteAlbum: " + e);
+            System.out.println("SQL Error in insertAlbum: " + e);
         }
+        return generatedKey;
     }
 
-    public void insertSong(String songTitle) {
+
+    public void insertSong(int albumID, String songTitle) {
+        int generatedKey = 0;
         try (Connection conn = this.connect()) {
             PreparedStatement insert_song_ps = conn.prepareStatement(INSERT_SONG);
-            insert_song_ps.setString(1, songTitle);
+            insert_song_ps.setInt(1, albumID);
+            insert_song_ps.setString(2, songTitle);
             insert_song_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in deleteSong: " + e);
+            System.out.println("SQL Error in insertSong: " + e);
         }
     }
 

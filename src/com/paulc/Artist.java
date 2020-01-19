@@ -17,16 +17,26 @@ public class Artist {
         return this.name;
     }
 
+    //close this when app closes??
+    //Stream Reader for class
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     public void removeArtist(String artistName){
         DataSource ds = new DataSource();
         ds.deleteArtist(artistName);
     }
 
-    public static void addArtist(){
+    public static int addArtistReturnID(){
         DataSource ds = new DataSource();
-        ds.insertArtist(Artist.promptForNewArtist());
+        int generatedKey = ds.insertArtist(Artist.promptForNewArtist());
+        return generatedKey;
     }
+
+    public static int returnExistingArtistID(){
+        DataSource ds = new DataSource();
+        return ds.artistNameToArtistID(Artist.promptForExistingArtist());
+    }
+
 
     public void updateArtistName(String newName){
         if (Artist.artistExist(newName)){
@@ -40,20 +50,35 @@ public class Artist {
 
     public static int artistNameToArtistID(String artistName){
         DataSource ds = new DataSource();
-        int artistID = ds.artistNameToArtistID(artistName);
-        return artistID;
+        int newArtistDBKey = ds.artistNameToArtistID(artistName);
+        return newArtistDBKey;
+    }
+
+
+    //Validation method as validation could/should be more in-depth and this would allow easy changes
+    private static boolean artistPromptInputValid(String albumName){
+        return (!(albumName.equals("") || albumName.equals(" ") || albumName.equals("  ") || albumName.contains("   ")));
     }
 
 
     public static String promptForNewArtist() {
         String artistName = null;
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
-            System.out.println("Please enter the name of an Artist in the library: ");
+        try{
+            System.out.println("Please enter the name of the Artist: ");
             artistName = br.readLine();
-            while(Artist.artistExist(artistName)){
-                System.out.println(artistName + " is already the library, please enter a new Artist");
-                artistName = br.readLine();
 
+            while(!Artist.artistPromptInputValid(artistName)){
+                System.out.println("Please enter a valid name for the Artist: ");
+                artistName = br.readLine();
+            }
+
+
+            if (Artist.artistExist(artistName)){
+                while(Artist.artistExist(artistName)){
+                    System.out.println(artistName + " is already the library, please enter a new Artist");
+                    artistName = br.readLine();
+
+                }
             }
         }catch(IOException e) {
             System.out.println("Error prompting for Artist new name: " +e.getMessage());
@@ -87,8 +112,8 @@ public class Artist {
 
     public static String promptForExistingArtist() {
         String artistName = null;
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
-            System.out.println("Please enter the name of an Artist in the library: ");
+        try{
+            System.out.println("Please enter the name of the Artist: ");
             artistName = br.readLine();
             while(!Artist.artistExist(artistName)){
                 System.out.println(artistName + " isn't an Artist in the library, please enter the Artist in the library");

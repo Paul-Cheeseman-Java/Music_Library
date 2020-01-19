@@ -69,70 +69,39 @@ public class Song {
     }
 
 
+
     //Validation method as validation could/should be more in-depth and this would allow easy changes
+    //Just example tests
     private static boolean songPromptInputValid(String songName){
-        return (!(songName.equals("") || songName.equals(" ")));
+        return (!(songName.contains("@") || songName.contains("#")));
     }
 
 
-
-    public static String promptForExistingSong() {
+    //Songs not tested to be unique as it is will be tied to an unique album, and its unlikely
+    //for an artist to release 2 songs with the same title on the same album.
+    public static String promptForSong() {
         String songName = null;
         try{
-            System.out.println("Please enter the name of an Song in the library: ");
+            System.out.println("Please enter the name of song (or hit return to exit): ");
             songName = br.readLine();
-
-            //Get valid input
-            while(!Song.songExist(songName)){
-                System.out.println(songName + " not in library, please enter the title of a song in the library: ");
-                songName = br.readLine();
+            //if an empty line, abort
+            if (songName != "" || songName != " " || songName != "  " || !songName.contains("   ")){
+                //Get valid input if first album input existed
+                while(!Song.songPromptInputValid(songName)){
+                    System.out.println("Please enter a valid title for the song (or hit return to exit): ");
+                    songName = br.readLine();
+                }
             }
-        }catch(IOException e) {
-            System.out.println("Error prompting for existing song name: " +e.getMessage());
-        }
-        return songName;
-    }
-
-
-
-
-
-
-    public static String promptForNewSong() {
-        String songName = null;
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
-            System.out.println("Please enter the name of the new Song: ");
-            songName = br.readLine();
-            //Songs not tested to be unique as it is will be tied to an unique album, and its unlikely
-            //for an artist to release 2 songs with the same title on the same album.
-
-            //Get valid input if first album input existed
-            while(!Song.songPromptInputValid(songName)){
-                System.out.println("Please enter  a valid title for the new/updated Album: ");
-                songName = br.readLine();
-
-            }
-
         }catch(IOException e) {
             System.out.println("Error prompting for Song name: " +e.getMessage());
         }
         return songName;
     }
 
-
-
-    public static boolean songExist(String songName) {
+    public static void addSong(String songTitle, int albumID){
         DataSource ds = new DataSource();
-        ArrayList<String> allsongNames = ds.listAllSongNames();
-        boolean songExists = false;
-        for(String songNameInLibrary: allsongNames){
-            if(songNameInLibrary.equals(songName)){
-                songExists = true;
-            }
-        }
-        return songExists;
+        ds.insertSong(albumID, songTitle);
     }
-
 
 
 }

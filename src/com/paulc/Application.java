@@ -155,21 +155,15 @@ public class Application {
     }
 
     private static void addMenu(){
-    /*
-        Add new artist, add album, loop through songs
-        Add Album, get new Artist, loop adding songs until termination char (blank???)
-        Add Album, get existing Artist, loop adding songs until termination char (blank???)
-        Add a song to existing album, prompt album, prompt for song
-    */
         int addMenuControl = 1;
         try{
             while(addMenuControl > 0) {
                 System.out.println("    ------------------------------");
                 System.out.println("    --------  Add Options --------");
                 System.out.println("    ------------------------------");
-                System.out.println("    1 - Add an Artist");
-                System.out.println("    2 - Add an album");
-                System.out.println("    3 - Add a song");
+                System.out.println("    1 - Add a new Artist & Album");
+                System.out.println("    2 - Add a new Album for an existing Artist");
+                System.out.println("    3 - Add a song to an Album");
                 System.out.println("    0 - Main Menu ");
                 System.out.println("    ------------------------------");
                 System.out.println("  ");
@@ -177,15 +171,28 @@ public class Application {
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
                 addMenuControl = sc.nextInt();
+
+                String songName = "";
+                int albumID = 0;
                 switch (addMenuControl){
                     case 1:
-                        System.out.println("Option 1 (Add an artist) selected ");;
+                        int artistID = Album.addAlbum(Artist.addArtistReturnID());
+                        songName = Song.promptForSong();
+                        while(!songName.equals("")){
+                            Song.addSong(songName, artistID);
+                            songName = Song.promptForSong();
+                        }
                         break;
                     case 2:
-                        System.out.println("Option 2 (Add an album) selected ");;
+                        albumID = Album.addAlbum(Artist.returnExistingArtistID());
+                        songName = Song.promptForSong();
+                        while(!songName.equals("")){
+                            Song.addSong(songName, albumID);
+                            songName = Song.promptForSong();
+                        }
                         break;
                     case 3:
-                        System.out.println("Option 3 (Add a song) selected ");;
+                        Song.addSong(Song.promptForSong(), Album.getAlbumIDFromName());
                         break;
                 }
             }
@@ -194,7 +201,6 @@ public class Application {
             Application.addMenu();
         }
     }
-
 
     private static void updateMenu(){
         /*

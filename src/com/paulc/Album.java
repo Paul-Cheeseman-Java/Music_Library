@@ -50,6 +50,14 @@ public class Album {
         return location;
     }
 
+    public static int albumNameToAlbumID(String albumName){
+        DataSource ds = new DataSource();
+        int albumID = ds.albumNameToArtistID(albumName);
+        return albumID;
+    }
+
+
+
     //Creation by user input, using Artist Name and a lookup for ID as user will not know Artist_ID
     public Album(String artistName, String title, String location){
         this.artist_ID = Artist.artistNameToArtistID(artistName);
@@ -74,10 +82,17 @@ public class Album {
     }
 
 
-    public static void addNewAlbum(){
+    public static int getAlbumIDFromName(){
+        return Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle());
+    }
+
+
+    public static int addAlbum(int artistID){
         String newTitle = Album.promptForNewAlbumTitle();
         String newLocation = Album.promptForNewLocation();
-        System.out.println("Into DB: " + newTitle + ", location: " +newLocation);
+        DataSource ds = new DataSource();
+        int newAlbumDBKey = ds.insertAlbum(artistID, newTitle, newLocation);;
+        return newAlbumDBKey;
     }
 
     public static void addExistingAlbum(){
@@ -89,12 +104,12 @@ public class Album {
 
     //Validation method as validation could/should be more in-depth and this would allow easy changes
     private static boolean albumPromptInputValid(String albumName){
-        return (!(albumName.equals("") || albumName.equals(" ")));
+        return (!(albumName.equals("") || albumName.equals(" ") || albumName.equals("  ") || albumName.contains("   ")));
     }
 
     //
     private static boolean locationPromptInputValid(String location){
-        return (!(location.equals("") || location.equals(" ")));
+        return (!(location.equals("") || location.equals(" ") || location.equals("  ") || location.contains("   ")));
     }
 
 
@@ -121,11 +136,11 @@ public class Album {
     public static String promptForNewAlbumTitle() {
         String albumName = null;
         try{
-            System.out.println("Please enter the title of the new/updated Album: ");
+            System.out.println("Please enter the title of the new Album: ");
             albumName = br.readLine();
             //Get valid input
             while(!Album.albumPromptInputValid(albumName)){
-                System.out.println("Please enter a valid title for the new/updated Album: ");
+                System.out.println("Please enter a valid title for the new Album: ");
                 albumName = br.readLine();
             }
             //Check for album existence before creating
@@ -137,7 +152,6 @@ public class Album {
                 while(!Album.albumPromptInputValid(albumName)){
                     System.out.println("Please enter  a valid title for the new/updated Album: ");
                     albumName = br.readLine();
-
                }
             }
         }catch(IOException e) {
