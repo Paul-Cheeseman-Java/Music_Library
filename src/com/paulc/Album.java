@@ -8,69 +8,51 @@ import java.util.ArrayList;
 
 public class Album {
 
-    private int artist_ID;      //Required
-    private String title;       //Required
-    private String location;    //Required
+    private int artist_ID;      // Kept in as part of original stored object, possibly less confusing for future development
+    private String title;
+    private String location;
 
-    //close this when app closes??
-    //Stream Reader for class
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public static void closeStream(){
-        try{
-            br.close();
-        } catch (IOException e){
-            System.out.println("Problem closing Album's stream: " + e.getMessage());
-
-        }
-    }
-
-
-    //Direct creation from DB read, uses artist_ID
+    // Direct creation from DB read, uses numeric artist_ID
     public Album(int artist_ID, String title, String location){
         this.artist_ID = artist_ID;
         this.title = title;
         this.location = location;
     }
 
-    public String getTitle() {
-        return title;
-    }
 
-    public void setLocation(String location) {
+    // Creation by app to insert into DB (so no id as yet)
+    public Album(String title, String location){
+        this.title = title;
         this.location = location;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
-
-    public String getLocation() {
-        return location;
-    }
-
-    public static int albumNameToAlbumID(String albumName){
-        DataSource ds = new DataSource();
-        int albumID = ds.albumNameToArtistID(albumName);
-        return albumID;
-    }
-
-
-
-    //Creation by user input, using Artist Name and a lookup for ID as user will not know Artist_ID
+    // Creation by user input, using the String Artist Name and a lookup for ID as user will not know Artist_ID
     public Album(String artistName, String title, String location){
         this.artist_ID = Artist.artistNameToArtistID(artistName);
         this.title = title;
         this.location = location;
     }
 
-    public static void listAllAlbums(Artist theArtist){
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getArtist_ID() {
+        return artist_ID;
+    }
+
+    public int getID() {
+        return artist_ID;
+    }
+
+    public static int albumNameToAlbumID(String albumName){
         DataSource ds = new DataSource();
-        ArrayList<Album> allTheAlbums = ds.artistsAlbums(theArtist.getName());
-        for (Album theAlbum : allTheAlbums){
-            System.out.println(theAlbum.getTitle());
-        }
+        int albumID = ds.albumNameToArtistID(albumName);
+        return albumID;
     }
 
     public static void removeAlbum(){
@@ -84,81 +66,124 @@ public class Album {
         return Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle());
     }
 
-
     public static int addAlbum(int artistID){
-        String newTitle = Album.promptForNewAlbumTitle();
+        String newAlbumName = Album.promptForNewAlbumTitle(artistID);
         String newLocation = Album.promptForNewLocation();
         DataSource ds = new DataSource();
-        int newAlbumDBKey = ds.insertAlbum(artistID, newTitle, newLocation);;
-        return newAlbumDBKey;
+        int newAlbumDBKey = ds.insertAlbum(artistID, newAlbumName, newLocation);;
+      return newAlbumDBKey;
     }
+
 
     public static void updateAlbum(){
         String oldTitle = Album.promptForExistingAlbumTitle();
-        String newTitle = Album.promptForExistingAlbumTitle();
-        String newLocation = Album.promptForNewLocation();
+        String newTitle = Album.promptForNewAlbumTitle();
+        String newLocation = Album.promptForExistingLocation();
         DataSource ds = new DataSource();
         ds.updateAlbum(oldTitle, newTitle, newLocation);
     }
 
-
-    //Validation method as validation could/should be more in-depth and this would allow easy changes
+    // Validation for user input.
+    // Very basic at the moment but extracted to a separate method to make sure it will only need to be updated in one place.
     private static boolean albumPromptInputValid(String albumName){
         return (!(albumName.equals("") || albumName.equals(" ") || albumName.equals("  ") || albumName.contains("   ")));
     }
 
-    //
+    // Validation for user input.
+    // Very basic at the moment but extracted to a separate method to make sure it will only need to be updated in one place.
     private static boolean locationPromptInputValid(String location){
         return (!(location.equals("") || location.equals(" ") || location.equals("  ") || location.contains("   ")));
     }
 
 
-    public static String promptForExistingAlbumTitle() {
-        String albumName = null;
-        try{
-            System.out.println("Please enter the title of an Album in the library: ");
-            albumName = br.readLine();
-            //Check for album existence before creating
-            while(!Album.albumExist(albumName)){
-                System.out.println("'" + albumName + "' is not in the library, please enter an album in the library:");
-                albumName = br.readLine();
-                //Get valid input if first album input existed
-            }
-        }catch(IOException e) {
-            System.out.println("Error prompting for Album name: " +e.getMessage());
-        }
-        return albumName;
-    }
 
-
-    //Couldn't use try-with-resources with BufferedReader, InputStreamReader, System.in
-    //when (auto)closing it in one method would mean System.in would be closed when other methods tried to use it
     public static String promptForNewAlbumTitle() {
+        boolean albumExist;  //assuming album exists
+        String albumArtist = Artist.promptForExistingArtist();
         String albumName = null;
+
         try{
-            System.out.println("Please enter the title of the new Album: ");
+            System.out.println("Please enter the title of the Album: ");
             albumName = br.readLine();
-            //Get valid input
             while(!Album.albumPromptInputValid(albumName)){
-                System.out.println("Please enter a valid title for the new Album: ");
+                System.out.println("Please enter a valid title for the new/updated Album: ");
                 albumName = br.readLine();
             }
-            //Check for album existence before creating
-            while(Album.albumExist(albumName)){
-                System.out.println("'" + albumName + "' is already in the library, please enter a valid album name:");
-                albumName = br.readLine();
 
-                //Get valid input if first album input existed
+            albumExist = Album.albumExist(albumName, albumArtist);
+
+            while(albumExist){
+                System.out.println("'" + albumArtist + "' already has an album " + "'" + albumName +"' in the library");
+                System.out.println("Please enter the title of an album '" + albumArtist + "' doesn't have in the library: ");
+                albumName = br.readLine();
                 while(!Album.albumPromptInputValid(albumName)){
                     System.out.println("Please enter a valid title for the new/updated Album: ");
                     albumName = br.readLine();
-               }
+                }
+                albumExist = Album.albumExist(albumName, albumArtist);
+
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for new Album name: " +e.getMessage());
+            System.out.println("Error prompting for Existing Album name: " +e.getMessage());
         }
         return albumName;
     }
+
+
+    public static String promptForNewAlbumTitle(int artistID) {
+        boolean albumExist;  //assuming album exists
+        String albumArtist = Artist.returnArtist(artistID).getName();
+        String albumName = null;
+
+        try{
+            System.out.println("Please enter the title of the Album: ");
+            albumName = br.readLine();
+            while(!Album.albumPromptInputValid(albumName)){
+                System.out.println("Please enter a valid title for the new/updated Album: ");
+                albumName = br.readLine();
+            }
+
+            albumExist = Album.albumExist(albumName, albumArtist);
+
+            while(albumExist){
+                System.out.println("'" + albumArtist + "' already has an album " + "'" + albumName +"' in the library");
+                System.out.println("Please enter the title of an album '" + albumArtist + "' doesn't have in the library: ");
+                albumName = br.readLine();
+                while(!Album.albumPromptInputValid(albumName)){
+                    System.out.println("Please enter a valid title for the new/updated Album: ");
+                    albumName = br.readLine();
+                }
+                albumExist = Album.albumExist(albumName, albumArtist);
+
+            }
+        }catch(IOException e) {
+            System.out.println("Error prompting for Existing Album name: " +e.getMessage());
+        }
+        return albumName;
+    }
+
+
+    public static String promptForExistingAlbumTitle() {
+        boolean existingAlbum = false;
+        String albumName = null;
+        try{
+            String albumArtist = Artist.promptForExistingArtist();
+            System.out.println("Please enter the title of an Album in the library: ");
+            albumName = br.readLine();
+            //existingAlbum = Album.albumExist(albumName, albumArtist);
+
+            while(!existingAlbum){
+                System.out.println("'" + albumArtist + "' does not an album " + "'" + albumName +"' in the library");
+                System.out.println("Please enter the title of a '" + albumArtist + "' Album in the library: ");
+                albumName = br.readLine();
+                existingAlbum = Album.albumExist(albumName, albumArtist);
+            }
+        }catch(IOException e) {
+            System.out.println("Error prompting for Existing Album name: " +e.getMessage());
+        }
+        return albumName;
+    }
+
 
 
     public static String promptForNewLocation() {
@@ -173,50 +198,38 @@ public class Album {
                  location = br.readLine();
               }
         }catch(IOException e) {
-            System.out.println("Error prompting for new Location: " +e.getMessage());
+            System.out.println("Error prompting for New Location: " +e.getMessage());
         }
         return location;
     }
-
 
     public static String promptForExistingLocation() {
         String location = null;
         try{
-            System.out.println("Please enter the directory of the albums music files (hit return to keep existing): ");
+            System.out.println("Please enter the new directory of the albums music files (or hit return to keep existing): ");
             location = br.readLine();
         }catch(IOException e) {
-            System.out.println("Error prompting for new Location: " +e.getMessage());
+            System.out.println("Error prompting for Existing Location: " +e.getMessage());
         }
         return location;
     }
 
 
-    public static void deleteAlbum(String albumName){
+    public static boolean albumExist(String albumName,   String albumArtist) {
+        System.out.println("Make me private");
         DataSource ds = new DataSource();
-        ds.deleteAlbum(albumName);
-    }
-
-    public static boolean albumExist(String albumName) {
-        DataSource ds = new DataSource();
-        ArrayList<String> allAlbumNames = ds.listAllAlbumNames();
-        boolean albumExists = false;
-        for(String albumNameInLibrary: allAlbumNames){
-            if(albumNameInLibrary.equals(albumName)){
-                albumExists = true;
+        ArrayList<Album> allAlbumNames = ds.artistsAlbums(albumArtist);
+        boolean existingAlbum = false;
+        for(Album albumNameInLibrary: allAlbumNames){
+            System.out.println("1st Name: " + albumName);
+            System.out.println("2nd Name: " + albumNameInLibrary.getTitle());
+            if(albumNameInLibrary.getTitle().equals(albumName)){
+                System.out.println("Match?");
+                existingAlbum = true;
             }
         }
-        return albumExists;
+        return existingAlbum;
     }
-
-
-    public static void listAllAlbums(){
-        DataSource ds = new DataSource();
-        ArrayList<String> albumNamesInLibrary = ds.listAllAlbumNames();
-        for (String albumName : albumNamesInLibrary){
-            System.out.println(albumName);
-        }
-    }
-
 
     public void listAllSongs(){
         DataSource ds = new DataSource();
@@ -226,9 +239,14 @@ public class Album {
         }
     }
 
-    public int amountOfSongs(){
-        DataSource ds = new DataSource();
-        return ds.amountOfSongsOnAlbum(this.title);
+    public static void closeStream(){
+        try{
+            br.close();
+        } catch (IOException e){
+            System.out.println("Problem closing Album's stream: " + e.getMessage());
+        }
     }
+
+
 
 }

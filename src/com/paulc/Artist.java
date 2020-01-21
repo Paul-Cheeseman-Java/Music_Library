@@ -8,24 +8,43 @@ import java.util.ArrayList;
 public class Artist {
 
     private String name;
+    private int id;
 
-    public Artist(String name){
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    public Artist(int artistID, String name){
+        this.id = artistID;
         this.name = name;
     }
+
 
     public String getName(){
         return this.name;
     }
 
-    //close this when app closes??
-    //Stream Reader for class
-    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public int getID(){
+        return this.id;
+    }
+
 
     public static void removeArtist(){
         String artistName = Artist.promptForExistingArtist();
         DataSource ds = new DataSource();
         ds.deleteArtist(artistName);
     }
+
+
+    public static ArrayList<String> returnArtistsAlbumNames(){
+        DataSource ds = new DataSource();
+        String artist = Artist.promptForExistingArtist();
+        ArrayList<String> artistsAlbumNames = new ArrayList<>();
+        ArrayList<Album> artistsAlbums = ds.artistsAlbums(artist);
+        for (Album album : artistsAlbums ){
+            artistsAlbumNames.add(album.getTitle());
+        }
+        return artistsAlbumNames;
+    }
+
 
     public static void listArtistsAlbums(){
         DataSource ds = new DataSource();
@@ -68,6 +87,12 @@ public class Artist {
         return ds.artistNameToArtistID(Artist.promptForExistingArtist());
     }
 
+    public static Artist returnArtist(int artistID){
+        DataSource ds = new DataSource();
+        return ds.returnArtist(artistID);
+    }
+
+
 
     public static void updateArtist(){
         String currentName = Artist.promptForExistingArtist();
@@ -88,7 +113,8 @@ public class Artist {
     }
 
 
-    //Validation method as validation could/should be more in-depth and this would allow easy changes
+    // Validation for user input.
+    // Very basic at the moment but extracted to a separate method to make sure it will only need to be updated in one place.
     private static boolean artistPromptInputValid(String albumName){
         return (!(albumName.equals("") || albumName.equals(" ") || albumName.equals("  ") || albumName.contains("   ")));
     }
@@ -111,14 +137,30 @@ public class Artist {
                 }
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for Artist new name: " +e.getMessage());
+            System.out.println("Error prompting for New Artist name: " +e.getMessage());
         }
         return artistName;
     }
 
 
+    public static String promptForExistingArtist() {
+        String artistName = null;
+        try{
+            System.out.println("Please enter the name of an Artist in the library: ");
+            artistName = br.readLine();
+            while(!Artist.artistExist(artistName)){
+                System.out.println("'" + artistName + "' isn't an Artist in the library, please enter an Artist in the library");
+                artistName = br.readLine();
 
-    public static boolean artistExist(String artistName) {
+            }
+        }catch(IOException e) {
+            System.out.println("Error prompting for Existing Artist name: " +e.getMessage());
+        }
+        return artistName;
+    }
+
+
+    private static boolean artistExist(String artistName) {
         DataSource ds = new DataSource();
         ArrayList<String> allArtistsNames = ds.listAllArtistNames();
         boolean artistExists = false;
@@ -139,27 +181,14 @@ public class Artist {
         }
     }
 
-
-    public static String promptForExistingArtist() {
-        String artistName = null;
+    public static void closeStream(){
         try{
-            System.out.println("Please enter the name of an Artist in the library: ");
-            artistName = br.readLine();
-            while(!Artist.artistExist(artistName)){
-                System.out.println("'" + artistName + "' isn't an Artist in the library, please enter an Artist in the library");
-                artistName = artistName = br.readLine();
-
-            }
-        }catch(IOException e) {
-            System.out.println("Error prompting for Artist name: " +e.getMessage());
+            br.close();
         }
-        return artistName;
+        catch(IOException e) {
+            System.out.println("Problem closing Artist's stream: " + e.getMessage());
+        }
     }
 
-
-    public int amountOfAlbums(){
-        DataSource ds = new DataSource();
-        return ds.amountOfAlbumsArtistHas(this.name);
-    }
 
 }

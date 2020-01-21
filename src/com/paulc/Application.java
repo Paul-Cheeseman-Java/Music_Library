@@ -1,31 +1,22 @@
 package com.paulc;
 
-import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Application {
 
-
-    //Application
-    //check if database exists, if not prompt for one or create new one???
-    //presents menu
-
-    //If Artist doesn't exist, use ArtistAlbumSong, then add songs to album
-    //If artist exists but Album doesn't exist, use AlbumSong, then add songs to album
-
-
-    //Show a PLAY option which displays file location from album and song name (this would hand over to the playing softfware
-
-    private static void load(){
-        //A method to load in data???
-    }
-
     public static void start(){
-        //separate incase more initialization code required in future,
+        // Separate in case more initialization code required in future,
         Application.mainMenu();
 
     }
+
+    private static void closeStreams(){
+        Artist.closeStream();
+        Album.closeStream();
+        Song.closeStream();
+    }
+
 
     private static void mainMenu(){
         int mainMenuControl = 1;
@@ -64,16 +55,13 @@ public class Application {
                 }
             }
         } catch (InputMismatchException exception) {
-            System.out.println("Error: " +exception);
             Application.mainMenu();
         }
+        Application.closeStreams();
     }
 
 
     private static void listMenu(){
-        /*
-            Methods exist
-        */
         int listMenuControl = 1;
         try{
             while(listMenuControl > 0) {
@@ -224,5 +212,7 @@ public class Application {
             Application.RemoveMenu();
         }
     }
+
+
 
 }
