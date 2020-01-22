@@ -58,10 +58,11 @@ public class Song {
     }
 
 
-    public static void removeSong(){
-        //String songTitle = Song.promptForExistingSong();
+    public static void deleteSong(){
+        int songToBeDeletedAlbumID = Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle());
+        String songToBeDeletedTitle = Song.promptForExistingSong(songToBeDeletedAlbumID);
         DataSource ds = new DataSource();
-        //ds.deleteSong(songTitle);
+        ds.deleteSong(songToBeDeletedAlbumID, songToBeDeletedTitle);
     }
 
 

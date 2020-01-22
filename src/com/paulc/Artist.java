@@ -27,7 +27,7 @@ public class Artist {
     }
 
 
-    public static void removeArtist(){
+    public static void deleteArtist(){
         String artistName = Artist.promptForExistingArtist();
         DataSource ds = new DataSource();
         ds.deleteArtist(artistName);

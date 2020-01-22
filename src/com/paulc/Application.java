@@ -195,13 +195,13 @@ public class Application {
                 removeMenuControl = sc.nextInt();
                 switch (removeMenuControl){
                     case 1:
-                        Artist.removeArtist();
+                        Artist.deleteArtist();
                         break;
                     case 2:
-                        Album.removeAlbum();
+                        Album.deleteAlbum();
                         break;
                     case 3:
-                        Song.removeSong();
+                        Song.deleteSong();
                         break;
                 }
             }

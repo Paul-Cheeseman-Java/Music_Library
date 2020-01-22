@@ -75,10 +75,11 @@ public class Album {
         return ds.returnAlbum(albumID);
     }
 
-    public static void removeAlbum(){
-        String albumName = Album.promptForExistingAlbumTitle();
+    public static void deleteAlbum(){
+        int artistID = Artist.returnExistingArtistID();
+        String albumName = Album.promptForExistingAlbumTitle(artistID);
         DataSource ds = new DataSource();
-        ds.deleteAlbum(albumName);
+        ds.deleteAlbum(artistID, albumName);
     }
 
 
@@ -272,6 +273,7 @@ public class Album {
         ArrayList<Album> allAlbumNames = ds.artistsAlbums(albumArtist);
         boolean existingAlbum = false;
         for(Album albumNameInLibrary: allAlbumNames){
+            System.out.println("Song in library: " +albumNameInLibrary.getTitle() + ", Album searching for: " +albumName);
             if(albumNameInLibrary.getTitle().equals(albumName)){
                 existingAlbum = true;
             }

@@ -33,10 +33,9 @@ public class DataSource {
             COLUMN_ALBUMS_ALBUM_ID + " = ?";
 
 
-
-    private static final String DELETE_ARTIST = "DELETE FROM " + TABLE_ARTISTS + " WHERE " + COLUMN_ARTISTS_ARTIST_NAME + "= ?";
-    private static final String DELETE_ALBUM = "DELETE FROM " + TABLE_ALBUMS + " WHERE " + COLUMN_ALBUMS_TITLE + "= ?";
-    private static final String DELETE_SONG = "DELETE FROM " + TABLE_SONGS + " WHERE " + COLUMN_SONGS_TITLE + "= ?";
+    private static final String DELETE_ARTIST = "DELETE FROM " + TABLE_ARTISTS + " WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
+    private static final String DELETE_ALBUM = "DELETE FROM " + TABLE_ALBUMS + " WHERE " + COLUMN_ALBUMS_TITLE + " = ? AND " + COLUMN_ALBUMS_ARTIST_ID + " = ?";
+    private static final String DELETE_SONG = "DELETE FROM " + TABLE_SONGS + " WHERE " + COLUMN_SONGS_TITLE + " = ? AND " + COLUMN_SONGS_ALBUM_ID + " = ?";
 
     private static final String LIST_ARTIST_ALBUMS = "SELECT * FROM " +
             TABLE_ALBUMS + " INNER JOIN " + TABLE_ARTISTS + " ON " + TABLE_ARTISTS + "." +
@@ -50,10 +49,7 @@ public class DataSource {
     private static final String UPDATE_ARTIST = "UPDATE " + TABLE_ARTISTS + " SET Name = ? WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
     private static final String UPDATE_ALBUM = "UPDATE " + TABLE_ALBUMS + " SET Title = ?, Location = ? WHERE " + COLUMN_ALBUMS_TITLE + " = ? AND " + COLUMN_ALBUMS_ARTIST_ID + " = ?";
     private static final String UPDATE_ALBUM_TITLE_ONLY = "UPDATE " + TABLE_ALBUMS + " SET Title = ? WHERE " + COLUMN_ALBUMS_TITLE + " = ? AND " + COLUMN_ALBUMS_ARTIST_ID + " = ?";
-
     private static final String UPDATE_SONG = "UPDATE " + TABLE_SONGS + " SET Title = ? WHERE " + COLUMN_SONGS_TITLE + " = ? AND " + COLUMN_SONGS_ALBUM_ID + " = ?";
-
-
 
     private static final String INSERT_ARTIST = "INSERT INTO " + TABLE_ARTISTS + "(" + COLUMN_ARTISTS_ARTIST_NAME + ") VALUES(?)";
     private static final String INSERT_ALBUM = "INSERT INTO " + TABLE_ALBUMS + "(" + COLUMN_ALBUMS_ARTIST_ID + ", " +
@@ -71,7 +67,7 @@ public class DataSource {
     /* A development helper method which displays the executable SQL for a supplied query */
     public void displayQuery()
     {
-        System.out.println("Query: " + UPDATE_SONG);
+        System.out.println("Query: " + DELETE_ALBUM);
     }
 
     private Connection connect() {
@@ -218,10 +214,11 @@ public class DataSource {
         }
     }
 
-    public void deleteAlbum(String albumTitle) {
+    public void deleteAlbum(int artistID, String albumTitle) {
         try (Connection conn = this.connect()) {
             PreparedStatement delete_album_ps = conn.prepareStatement(DELETE_ALBUM);
             delete_album_ps.setString(1, albumTitle);
+            delete_album_ps.setInt(2, artistID);
             delete_album_ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("SQL Error in deleteAlbum: " + e);
@@ -327,10 +324,11 @@ public class DataSource {
         }
     }
 
-    public void deleteSong(String songTitle) {
+    public void deleteSong(int albumID, String songTitle) {
         try (Connection conn = this.connect()) {
             PreparedStatement delete_song_ps = conn.prepareStatement(DELETE_SONG);
             delete_song_ps.setString(1, songTitle);
+            delete_song_ps.setInt(2, albumID);
             delete_song_ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("SQL Error in deleteSong: " + e);
