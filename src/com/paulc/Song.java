@@ -19,31 +19,36 @@ public class Song {
         this.title = title;
     }
 
+    public Song(int album_ID, String title) {
+        this.album_ID = album_ID;
+        this.title = title;
+    }
+
     public String getTitle() {
         return title;
     }
 
-    public static void addSong(int albumID, String songTitle){
-        //if an empty songTitle, don't add
-        if (!(songTitle.equals("") || songTitle.equals(" ") || songTitle.equals("  ") || songTitle.contains("   "))){
+    public static boolean addSong(int albumID){
+        boolean addAnotherSong = false;
+        String newSongName = Song.promptForNewSongTitle(albumID);
+
+        while(!newSongName.isEmpty()){
             DataSource ds = new DataSource();
-            ds.insertSong(albumID, songTitle);
+            ds.insertSong(albumID, newSongName);
+            newSongName = Song.promptForNewSongTitle(albumID);
+            addAnotherSong = true;
         }
+        if (newSongName.isEmpty()){
+            addAnotherSong = false;
+        }
+        return addAnotherSong;
     }
 
-    public static void updateSong(){
-        String oldTitle = Song.promptForExistingSong();
-        String newTitle = Song.promptForNewSong();
-        if ((newTitle.equals("") || newTitle.equals(" ") || newTitle.equals("  ") || newTitle.contains("   "))){
-            newTitle = oldTitle;
-        }
-        DataSource ds = new DataSource();
-        ds.updateSong(oldTitle, newTitle);
-    }
+
     public static void removeSong(){
-        String songTitle = Song.promptForExistingSong();
+        //String songTitle = Song.promptForExistingSong();
         DataSource ds = new DataSource();
-        ds.deleteSong(songTitle);
+        //ds.deleteSong(songTitle);
     }
 
 
@@ -54,13 +59,10 @@ public class Song {
     }
 
 
-    // Each song is not tested to be unique as it is will be tied to an unique album, and its unlikely
-    // for an artist to release 2 songs with the same title on the same album.
-    // where as there is a chance two different artists may have the same named song:
-    //
-    public static String promptForNewSong() {
+    public static String promptForNewSongTitle(int albumID) {
         String songTitle = null;
         try{
+            String albumName = Album.returnAlbum(albumID).getTitle();
             System.out.println("Please enter the name of song (or hit return to exit): ");
             songTitle = br.readLine();
             //if an empty line, abort
@@ -68,6 +70,10 @@ public class Song {
                 //Get valid input if first album input existed
                 while(!Song.songPromptInputValid(songTitle)){
                     System.out.println("Please enter a valid title for the song (or hit return to exit): ");
+                    songTitle = br.readLine();
+                }
+                while(Song.songExist(songTitle, albumName)){
+                    System.out.println("'" + songTitle + "' is already the library for " +albumName +", please enter a new song:");
                     songTitle = br.readLine();
                 }
             }
@@ -81,9 +87,10 @@ public class Song {
     public static String promptForExistingSong() {
         String songTitle = null;
         try{
+            String albumName = Album.promptForExistingAlbumTitle();
             System.out.println("Please enter the name of song: ");
             songTitle = br.readLine();
-            while(!Song.songExist(songTitle)){
+            while(!Song.songExist(songTitle, albumName)){
                 System.out.println("'" + songTitle + "' is not in the library, please enter an song in the library:");
                 songTitle = br.readLine();
             }
@@ -94,23 +101,19 @@ public class Song {
     }
 
 
-    public static boolean songExist(String songTitle) {
+
+    public static boolean songExist(String songName, String albumName) {
         DataSource ds = new DataSource();
-        ArrayList<String> allsongTitles = ds.listAllSongTitles();
-        boolean songExists = false;
-        for(String songTitleInLibrary: allsongTitles){
-            if(songTitleInLibrary.equals(songTitle)){
-                songExists = true;
+        ArrayList<Song> allSongs = ds.albumSongs(albumName);
+        boolean existingSong = false;
+        for(Song songInAlbum: allSongs){
+            if(songInAlbum.getTitle().equals(songName)){
+                System.out.println("Match");
+                existingSong = true;
             }
         }
-        return songExists;
+        return existingSong;
     }
-
-
-
-
-
-
 
 
     public static void closeStream(){
@@ -120,6 +123,5 @@ public class Song {
             System.out.println("Problem closing Songs's stream: " + e.getMessage());
         }
     }
-
 
 }

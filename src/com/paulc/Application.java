@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Application {
 
+
     public static void start(){
         // Separate in case more initialization code required in future,
         Application.mainMenu();
@@ -113,27 +114,23 @@ public class Application {
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
                 addMenuControl = sc.nextInt();
-                String songName = "";
                 int albumID = 0;
                 switch (addMenuControl){
                     case 1:
-                        int artistID = Album.addAlbum(Artist.addArtistReturnID());
-                        songName = Song.promptForNewSong();
-                        while(!songName.equals("")){
-                            Song.addSong(artistID, songName);
-                            songName = Song.promptForNewSong();
+                        albumID = Album.addAlbum(Artist.addArtistReturnID());
+                        while(Song.addSong(albumID)){
+                            Song.addSong(albumID);
                         }
                         break;
+
                     case 2:
                         albumID = Album.addAlbum(Artist.returnExistingArtistID());
-                        songName = Song.promptForNewSong();
-                        while(!songName.equals("")){
-                            Song.addSong(albumID, songName);
-                            songName = Song.promptForNewSong();
+                        while(Song.addSong(albumID)){
+                            Song.addSong(albumID);
                         }
                         break;
                     case 3:
-                        Song.addSong(Album.getAlbumIDFromName(), Song.promptForNewSong());
+                        Song.addSong(Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle()));
                         break;
                 }
             }
@@ -212,7 +209,5 @@ public class Application {
             Application.RemoveMenu();
         }
     }
-
-
 
 }

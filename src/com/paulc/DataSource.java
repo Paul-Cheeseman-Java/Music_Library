@@ -29,13 +29,16 @@ public class DataSource {
     private static final String LIST_ALL_SONGS = "SELECT " + COLUMN_SONGS_TITLE + " FROM " + TABLE_SONGS;
     private static final String LIST_SPECIFIC_ARTIST = "SELECT * FROM " + TABLE_ARTISTS + " WHERE " +
             COLUMN_ARTISTS_ARTIST_ID + " = ?";
+    private static final String LIST_SPECIFIC_ALBUM = "SELECT * FROM " + TABLE_ALBUMS + " WHERE " +
+            COLUMN_ALBUMS_ALBUM_ID + " = ?";
+
+
 
     private static final String DELETE_ARTIST = "DELETE FROM " + TABLE_ARTISTS + " WHERE " + COLUMN_ARTISTS_ARTIST_NAME + "= ?";
     private static final String DELETE_ALBUM = "DELETE FROM " + TABLE_ALBUMS + " WHERE " + COLUMN_ALBUMS_TITLE + "= ?";
     private static final String DELETE_SONG = "DELETE FROM " + TABLE_SONGS + " WHERE " + COLUMN_SONGS_TITLE + "= ?";
 
-    private static final String LIST_ARTIST_ALBUMS = "SELECT " + TABLE_ALBUMS + "." + COLUMN_ALBUMS_ALBUM_ID + ", " +
-            TABLE_ALBUMS + "." + COLUMN_ALBUMS_TITLE + ", " +  TABLE_ALBUMS + "." + COLUMN_ALBUMS_LOCATION + " FROM " +
+    private static final String LIST_ARTIST_ALBUMS = "SELECT * FROM " +
             TABLE_ALBUMS + " INNER JOIN " + TABLE_ARTISTS + " ON " + TABLE_ARTISTS + "." +
             COLUMN_ARTISTS_ARTIST_ID + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUMS_ARTIST_ID + " WHERE " +
             TABLE_ARTISTS + "." + COLUMN_ARTISTS_ARTIST_NAME + "= ?";
@@ -64,7 +67,7 @@ public class DataSource {
     /* A development helper method which displays the executable SQL for a supplied query */
     public void displayQuery()
     {
-        System.out.println("Query: " + LIST_SPECIFIC_ARTIST);
+        System.out.println("Query: " + LIST_ARTIST_ALBUMS);
     }
 
     private Connection connect() {
@@ -209,6 +212,19 @@ public class DataSource {
     }
 
 
+    public Album returnAlbum(int albumID) {
+        Album returnedAlbum = null;
+        try (Connection conn = this.connect()) {
+            PreparedStatement returnAlbum_ps = conn.prepareStatement(LIST_SPECIFIC_ALBUM);
+            returnAlbum_ps.setInt(1, albumID);
+            ResultSet results = returnAlbum_ps.executeQuery();
+            returnedAlbum = new Album(results.getInt(COLUMN_ALBUMS_ALBUM_ID), results.getInt(COLUMN_ALBUMS_ARTIST_ID), results.getString(COLUMN_ALBUMS_TITLE), results.getString(COLUMN_ALBUMS_LOCATION));
+        } catch (SQLException e) {
+            System.out.println("SQL Error in returnAlbum: " + e);
+        }
+        return returnedAlbum;
+    }
+
     public ArrayList<Album> artistsAlbums(String artistName) {
         ArrayList<Album> albumsOfArtist = new ArrayList<>();
         try (Connection conn = this.connect()) {
@@ -217,6 +233,7 @@ public class DataSource {
             ResultSet results = list_artist_albums_ps.executeQuery();
             while (results.next()) {
                 albumsOfArtist.add(new Album(results.getInt(COLUMN_ALBUMS_ALBUM_ID),
+                        results.getInt(COLUMN_ALBUMS_ARTIST_ID),
                         results.getString(COLUMN_ALBUMS_TITLE),
                         results.getString(COLUMN_ALBUMS_LOCATION)));
             }
@@ -246,7 +263,7 @@ public class DataSource {
 
 
 
-    public int albumNameToArtistID(String albumName) {
+    public int albumNameToAlbumID(String albumName) {
         int albumID = 0;;
         try (Connection conn = this.connect()) {
             PreparedStatement album_Name_To_AlbumID_ps = conn.prepareStatement(GET_SPECIFIC_ALBUM_RECORD);
@@ -254,22 +271,32 @@ public class DataSource {
             ResultSet results = album_Name_To_AlbumID_ps.executeQuery();
             albumID = results.getInt(COLUMN_ALBUMS_ALBUM_ID);
         } catch (SQLException e) {
-            System.out.println("SQL Error in albumNameToArtistID: " + e);
+            System.out.println("SQL Error in albumNameToAlbumID: " + e);
         }
         return albumID;
     }
 
 
-    public void insertSong(int albumID, String songTitle) {
+    public int insertSong(int albumID, String songTitle) {
+        int generatedKey = 0;
         try (Connection conn = this.connect()) {
-            PreparedStatement insert_song_ps = conn.prepareStatement(INSERT_SONG);
+            PreparedStatement insert_song_ps = conn.prepareStatement(INSERT_SONG, Statement.RETURN_GENERATED_KEYS);
             insert_song_ps.setInt(1, albumID);
             insert_song_ps.setString(2, songTitle);
             insert_song_ps.executeUpdate();
+            ResultSet keys_rs = insert_song_ps.getGeneratedKeys();
+            if (keys_rs.next()) {
+                generatedKey = keys_rs.getInt(1);;
+            }
         } catch (SQLException e) {
             System.out.println("SQL Error in insertSong: " + e);
         }
+        return generatedKey;
     }
+
+
+
+
 
     public void updateSong(String oldTitle, String newTitle) {
         try (Connection conn = this.connect()) {
