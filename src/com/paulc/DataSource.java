@@ -48,8 +48,12 @@ public class DataSource {
             TABLE_ALBUMS + "." + COLUMN_ALBUMS_TITLE + "= ?";
 
     private static final String UPDATE_ARTIST = "UPDATE " + TABLE_ARTISTS + " SET Name = ? WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
-    private static final String UPDATE_ALBUM = "UPDATE " + TABLE_ALBUMS + " SET Title = ?, Location = ? WHERE " + COLUMN_ALBUMS_TITLE + " = ?";
-    private static final String UPDATE_SONG = "UPDATE " + TABLE_SONGS + " SET Title = ? WHERE " + COLUMN_SONGS_TITLE + " = ?";
+    private static final String UPDATE_ALBUM = "UPDATE " + TABLE_ALBUMS + " SET Title = ?, Location = ? WHERE " + COLUMN_ALBUMS_TITLE + " = ? AND " + COLUMN_ALBUMS_ARTIST_ID + " = ?";
+    private static final String UPDATE_ALBUM_TITLE_ONLY = "UPDATE " + TABLE_ALBUMS + " SET Title = ? WHERE " + COLUMN_ALBUMS_TITLE + " = ? AND " + COLUMN_ALBUMS_ARTIST_ID + " = ?";
+
+    private static final String UPDATE_SONG = "UPDATE " + TABLE_SONGS + " SET Title = ? WHERE " + COLUMN_SONGS_TITLE + " = ? AND " + COLUMN_SONGS_ALBUM_ID + " = ?";
+
+
 
     private static final String INSERT_ARTIST = "INSERT INTO " + TABLE_ARTISTS + "(" + COLUMN_ARTISTS_ARTIST_NAME + ") VALUES(?)";
     private static final String INSERT_ALBUM = "INSERT INTO " + TABLE_ALBUMS + "(" + COLUMN_ALBUMS_ARTIST_ID + ", " +
@@ -67,7 +71,7 @@ public class DataSource {
     /* A development helper method which displays the executable SQL for a supplied query */
     public void displayQuery()
     {
-        System.out.println("Query: " + LIST_ARTIST_ALBUMS);
+        System.out.println("Query: " + UPDATE_SONG);
     }
 
     private Connection connect() {
@@ -188,18 +192,31 @@ public class DataSource {
     }
 
 
-    public void updateAlbum(String oldTitle, String newTitle, String newLocation) {
+    public void updateAlbum(int artistID, String oldTitle, String newTitle, String newLocation) {
         try (Connection conn = this.connect()) {
             PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ALBUM);
             update_artist_ps.setString(1, newTitle);
             update_artist_ps.setString(2, newLocation);
             update_artist_ps.setString(3, oldTitle);
+            update_artist_ps.setInt(4, artistID);
             update_artist_ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("SQL Error in updateAlbum: " + e);
         }
     }
 
+    //
+    public void updateAlbum(int artistID, String oldTitle, String newTitle) {
+        try (Connection conn = this.connect()) {
+            PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ALBUM_TITLE_ONLY);
+            update_artist_ps.setString(1, newTitle);
+            update_artist_ps.setString(2, oldTitle);
+            update_artist_ps.setInt(3, artistID);
+            update_artist_ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SQL Error in updateAlbum: " + e);
+        }
+    }
 
     public void deleteAlbum(String albumTitle) {
         try (Connection conn = this.connect()) {
@@ -298,11 +315,12 @@ public class DataSource {
 
 
 
-    public void updateSong(String oldTitle, String newTitle) {
+    public void updateSong(int albumID, String oldTitle, String newTitle) {
         try (Connection conn = this.connect()) {
             PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_SONG);
             update_artist_ps.setString(1, newTitle);
             update_artist_ps.setString(2, oldTitle);
+            update_artist_ps.setInt(3, albumID);
             update_artist_ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("SQL Error in updateSong: " + e);

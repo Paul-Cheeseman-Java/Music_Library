@@ -44,6 +44,19 @@ public class Song {
         return addAnotherSong;
     }
 
+    public static void updateSong(){
+        int newSongsArtistID = Artist.artistNameToArtistID(Artist.promptForExistingArtist());
+        int newSongsAlbumID = Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle(newSongsArtistID));
+        String oldTitle = Song.promptForExistingSong(newSongsAlbumID);
+        String newTitle = Song.promptForNewSongTitle(newSongsAlbumID);
+
+        if (newTitle.isEmpty()){
+            newTitle = oldTitle;
+        }
+        DataSource ds = new DataSource();
+        ds.updateSong(newSongsAlbumID, oldTitle, newTitle);
+    }
+
 
     public static void removeSong(){
         //String songTitle = Song.promptForExistingSong();
@@ -84,13 +97,13 @@ public class Song {
     }
 
 
-    public static String promptForExistingSong() {
+    public static String promptForExistingSong(int album_ID) {
         String songTitle = null;
         try{
-            String albumName = Album.promptForExistingAlbumTitle();
-            System.out.println("Please enter the name of song: ");
+            String songAlbum = Album.returnAlbum(album_ID).getTitle();
+            System.out.println("Please enter the name of the existing song: ");
             songTitle = br.readLine();
-            while(!Song.songExist(songTitle, albumName)){
+            while(!Song.songExist(songTitle, songAlbum)){
                 System.out.println("'" + songTitle + "' is not in the library, please enter an song in the library:");
                 songTitle = br.readLine();
             }
@@ -99,7 +112,6 @@ public class Song {
         }
         return songTitle;
     }
-
 
 
     public static boolean songExist(String songName, String albumName) {
@@ -123,5 +135,6 @@ public class Song {
             System.out.println("Problem closing Songs's stream: " + e.getMessage());
         }
     }
+
 
 }

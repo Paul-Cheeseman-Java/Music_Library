@@ -130,7 +130,8 @@ public class Application {
                         }
                         break;
                     case 3:
-                        Song.addSong(Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle()));
+                        albumID = Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle());
+                        Song.addSong(albumID);
                         break;
                 }
             }
