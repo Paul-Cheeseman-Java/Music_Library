@@ -12,6 +12,7 @@ public class Application {
 
     }
 
+
     private static void closeStreams(){
         Artist.closeStream();
         Album.closeStream();
@@ -33,9 +34,10 @@ public class Application {
                 System.out.println("    0 - Exit ");
                 System.out.println("    ------------------------------");
                 System.out.println("  ");
-               System.out.println("Enter your choice ");
+                System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
                 mainMenuControl = sc.nextInt();
+
                 switch (mainMenuControl){
                     case 1:
                         Application.listMenu();

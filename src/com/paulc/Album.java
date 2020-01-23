@@ -122,16 +122,15 @@ public class Album {
     }
 
 
-    // Validation for user input.
-    // Very basic at the moment but extracted to a separate method to make sure it will only need to be updated in one place.
+    // Very basic at the moment but extracted to a separate method to make sure it can be changed easily.
     private static boolean albumPromptInputValid(String albumName){
-        return (!(albumName.equals("") || albumName.equals(" ") || albumName.equals("  ") || albumName.contains("   ")));
+        return (!(albumName.equals("") || albumName.contains("   ") || (albumName.contains("@") || albumName.contains("#"))));
     }
 
-    // Validation for user input.
-    // Very basic at the moment but extracted to a separate method to make sure it will only need to be updated in one place.
+
+    // Very basic at the moment but extracted to a separate method to make sure it can be changed easily.
     private static boolean locationPromptInputValid(String location){
-        return (!(location.equals("") || location.equals(" ") || location.equals("  ") || location.contains("   ")));
+        return (!(location.equals("") || location.contains("   ") || (location.contains("@") || location.contains("#"))));
     }
 
 
@@ -140,28 +139,29 @@ public class Album {
         String albumArtist = Artist.promptForExistingArtist();
         String albumName = null;
         try{
-            System.out.println("Please enter the title of the Album: ");
-            albumName = br.readLine();
+            System.out.println("Please enter the new Album title: ");
+            albumName = br.readLine().trim();
             while(!Album.albumPromptInputValid(albumName)){
-                System.out.println("Please enter a valid title for the new/updated Album: ");
-                albumName = br.readLine();
+                System.out.println("Please enter a valid new title for the Album: ");
+                albumName = br.readLine().trim();
             }
             albumExist = Album.albumExist(albumName, albumArtist);
             while(albumExist){
                 System.out.println("'" + albumArtist + "' already has an album " + "'" + albumName +"' in the library");
-                System.out.println("Please enter the title of an album '" + albumArtist + "' doesn't have in the library: ");
-                albumName = br.readLine();
+                System.out.println("Please enter a new album for '" + albumArtist + "': ");
+                albumName = br.readLine().trim();
                 while(!Album.albumPromptInputValid(albumName)){
-                    System.out.println("Please enter a valid title for the new/updated Album: ");
-                    albumName = br.readLine();
+                    System.out.println("Please enter a valid new title for the Album: ");
+                    albumName = br.readLine().trim();
                 }
                 albumExist = Album.albumExist(albumName, albumArtist);
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for Existing Album name: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return albumName;
     }
+
 
 
     public static String promptForNewAlbumTitle(int artistID) {
@@ -170,25 +170,25 @@ public class Album {
         String albumName = null;
 
         try{
-            System.out.println("Please enter the title of the Album: ");
-            albumName = br.readLine();
+            System.out.println("Please enter the new Album title: ");
+            albumName = br.readLine().trim();
             while(!Album.albumPromptInputValid(albumName)){
-                System.out.println("Please enter a valid title for the new/updated Album: ");
-                albumName = br.readLine();
+                System.out.println("Please enter a valid new title for the Album: ");
+                albumName = br.readLine().trim();
             }
             albumExist = Album.albumExist(albumName, albumArtist);
             while(albumExist){
                 System.out.println("'" + albumArtist + "' already has an album " + "'" + albumName +"' in the library");
-                System.out.println("Please enter the title of an album '" + albumArtist + "' doesn't have in the library: ");
-                albumName = br.readLine();
+                System.out.println("Please enter a new album for '" + albumArtist + "': ");
+                albumName = br.readLine().trim();
                 while(!Album.albumPromptInputValid(albumName)){
-                    System.out.println("Please enter a valid title for the new/updated Album: ");
-                    albumName = br.readLine();
+                    System.out.println("Please enter a valid new title for the Album: ");
+                    albumName = br.readLine().trim();
                 }
                 albumExist = Album.albumExist(albumName, albumArtist);
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for Existing Album name: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return albumName;
     }
@@ -199,18 +199,18 @@ public class Album {
         String albumName = null;
         try{
             String albumArtist = Artist.returnArtist(artistID).getName();
-            System.out.println("Please enter the title of an Album in the library: ");
+            System.out.println("Please enter the title of an album in the library: ");
             albumName = br.readLine();
             //existingAlbum = Album.albumExist(albumName, albumArtist);
             existingAlbum = Album.albumExist(albumName, albumArtist);
             while(!existingAlbum){
                 System.out.println("'" + albumArtist + "' does not an album " + "'" + albumName +"' in the library");
-                System.out.println("Please enter the title of a '" + albumArtist + "' Album in the library: ");
-                albumName = br.readLine();
+                System.out.println("Please enter the title of a '" + albumArtist + "' album in the library: ");
+                albumName = br.readLine().trim();
                 existingAlbum = Album.albumExist(albumName, albumArtist);
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for Existing Album name: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return albumName;
     }
@@ -221,18 +221,18 @@ public class Album {
         String albumName = null;
         try{
             String albumArtist = Artist.promptForExistingArtist();
-            System.out.println("Please enter the title of an Album in the library: ");
-            albumName = br.readLine();
+            System.out.println("Please enter the title of an album in the library: ");
+            albumName = br.readLine().trim();
             //existingAlbum = Album.albumExist(albumName, albumArtist);
             existingAlbum = Album.albumExist(albumName, albumArtist);
             while(!existingAlbum){
                 System.out.println("'" + albumArtist + "' does not an album " + "'" + albumName +"' in the library");
-                System.out.println("Please enter the title of a '" + albumArtist + "' Album in the library: ");
-                albumName = br.readLine();
+                System.out.println("Please enter the title of a '" + albumArtist + "' album in the library: ");
+                albumName = br.readLine().trim();
                 existingAlbum = Album.albumExist(albumName, albumArtist);
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for Existing Album name: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return albumName;
     }
@@ -241,16 +241,16 @@ public class Album {
     public static String promptForNewLocation() {
         String location = null;
         try{
-            System.out.println("Please enter the location of the Albums directory: ");
-            location = br.readLine();
+            System.out.println("Please enter the location of the albums directory: ");
+            location = br.readLine().trim();
 
             //Get valid input
              while(!Album.locationPromptInputValid(location)){
-                 System.out.println("Please enter a valid location for the Albums directory: ");
-                 location = br.readLine();
+                 System.out.println("Please enter a valid location for the albums directory: ");
+                 location = br.readLine().trim();
               }
         }catch(IOException e) {
-            System.out.println("Error prompting for New Location: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return location;
     }
@@ -259,10 +259,10 @@ public class Album {
     public static String promptForExistingLocation() {
         String location = null;
         try{
-            System.out.println("Please enter the new directory of the albums music files (or hit return to keep existing): ");
-            location = br.readLine();
+            System.out.println("Please enter a new directory for the albums music files (or hit return to keep existing): ");
+            location = br.readLine().trim();
         }catch(IOException e) {
-            System.out.println("Error prompting for Existing Location: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return location;
     }
@@ -274,7 +274,7 @@ public class Album {
         boolean existingAlbum = false;
         for(Album albumNameInLibrary: allAlbumNames){
             System.out.println("Song in library: " +albumNameInLibrary.getTitle() + ", Album searching for: " +albumName);
-            if(albumNameInLibrary.getTitle().equals(albumName)){
+            if(albumNameInLibrary.getTitle().toLowerCase().equals(albumName.toLowerCase())){
                 existingAlbum = true;
             }
         }
@@ -295,7 +295,7 @@ public class Album {
         try{
             br.close();
         } catch (IOException e){
-            System.out.println("Problem closing Album's stream: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

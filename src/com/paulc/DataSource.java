@@ -24,13 +24,11 @@ public class DataSource {
     private static final String COLUMN_SONGS_ALBUM_ID = "Album_ID";
     private static final String COLUMN_SONGS_TITLE = "Title";
 
-    private static final String LIST_ALL_ARTISTS = "SELECT " + COLUMN_ARTISTS_ARTIST_NAME + " FROM " + TABLE_ARTISTS;
-    private static final String LIST_ALL_ALBUMS = "SELECT " + COLUMN_ALBUMS_TITLE + " FROM " + TABLE_ALBUMS;
-    private static final String LIST_ALL_SONGS = "SELECT " + COLUMN_SONGS_TITLE + " FROM " + TABLE_SONGS;
-    private static final String LIST_SPECIFIC_ARTIST = "SELECT * FROM " + TABLE_ARTISTS + " WHERE " +
-            COLUMN_ARTISTS_ARTIST_ID + " = ?";
-    private static final String LIST_SPECIFIC_ALBUM = "SELECT * FROM " + TABLE_ALBUMS + " WHERE " +
-            COLUMN_ALBUMS_ALBUM_ID + " = ?";
+    private static final String LIST_ALL_ARTISTS = "SELECT " + COLUMN_ARTISTS_ARTIST_NAME + " FROM " + TABLE_ARTISTS + " ORDER BY " + COLUMN_ARTISTS_ARTIST_NAME;
+    private static final String LIST_ALL_ALBUMS = "SELECT " + COLUMN_ALBUMS_TITLE + " FROM " + TABLE_ALBUMS + "ORDER BY " + COLUMN_ALBUMS_TITLE;
+    private static final String LIST_ALL_SONGS = "SELECT " + COLUMN_SONGS_TITLE + " FROM " + TABLE_SONGS + " ORDER BY " + COLUMN_SONGS_TITLE;
+    private static final String LIST_SPECIFIC_ARTIST = "SELECT * FROM " + TABLE_ARTISTS + " WHERE " + COLUMN_ARTISTS_ARTIST_ID + " = ?" + " ORDER BY " + COLUMN_ARTISTS_ARTIST_NAME;
+    private static final String LIST_SPECIFIC_ALBUM = "SELECT * FROM " + TABLE_ALBUMS + " WHERE " + COLUMN_ALBUMS_ALBUM_ID + " = ?" + " ORDER BY " + COLUMN_ALBUMS_TITLE;
 
 
     private static final String DELETE_ARTIST = "DELETE FROM " + TABLE_ARTISTS + " WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
@@ -40,11 +38,11 @@ public class DataSource {
     private static final String LIST_ARTIST_ALBUMS = "SELECT * FROM " +
             TABLE_ALBUMS + " INNER JOIN " + TABLE_ARTISTS + " ON " + TABLE_ARTISTS + "." +
             COLUMN_ARTISTS_ARTIST_ID + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUMS_ARTIST_ID + " WHERE " +
-            TABLE_ARTISTS + "." + COLUMN_ARTISTS_ARTIST_NAME + "= ?";
+            TABLE_ARTISTS + "." + COLUMN_ARTISTS_ARTIST_NAME + "= ?" + " ORDER BY " + COLUMN_ALBUMS_TITLE;
     private static final String LIST_ALBUM_SONGS = "SELECT * FROM " +
             TABLE_SONGS + " INNER JOIN " + TABLE_ALBUMS + " ON " + TABLE_SONGS + "." +
             COLUMN_ALBUMS_ALBUM_ID + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUMS_ALBUM_ID + " WHERE " +
-            TABLE_ALBUMS + "." + COLUMN_ALBUMS_TITLE + "= ?";
+            TABLE_ALBUMS + "." + COLUMN_ALBUMS_TITLE + "= ?" + " ORDER BY " + COLUMN_SONGS_TITLE;
 
     private static final String UPDATE_ARTIST = "UPDATE " + TABLE_ARTISTS + " SET Name = ? WHERE " + COLUMN_ARTISTS_ARTIST_NAME + " = ?";
     private static final String UPDATE_ALBUM = "UPDATE " + TABLE_ALBUMS + " SET Title = ?, Location = ? WHERE " + COLUMN_ALBUMS_TITLE + " = ? AND " + COLUMN_ALBUMS_ARTIST_ID + " = ?";
@@ -67,7 +65,7 @@ public class DataSource {
     /* A development helper method which displays the executable SQL for a supplied query */
     public void displayQuery()
     {
-        System.out.println("Query: " + DELETE_ALBUM);
+        System.out.println("Query: " + LIST_ALL_ARTISTS);
     }
 
     private Connection connect() {
@@ -79,7 +77,7 @@ public class DataSource {
             config.enforceForeignKeys(true);
             conn = DriverManager.getConnection(url, config.toProperties());
         } catch (SQLException e) {
-            System.out.println("SQL Error in Connection: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return conn;
     }
@@ -90,13 +88,12 @@ public class DataSource {
             PreparedStatement insert_artist_ps = conn.prepareStatement(INSERT_ARTIST, Statement.RETURN_GENERATED_KEYS);
             insert_artist_ps.setString(1, artistName);
             insert_artist_ps.executeUpdate();
-
             ResultSet keys_rs = insert_artist_ps.getGeneratedKeys();
             if (keys_rs.next()) {
                 generatedKey = keys_rs.getInt(1);;
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in insertArtist: " + e);
+            System.out.println(e.getMessage());
         }
         return generatedKey;
     }
@@ -109,7 +106,7 @@ public class DataSource {
             update_artist_ps.setString(2, currentName);
             update_artist_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in updateArtist: " + e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -120,7 +117,7 @@ public class DataSource {
             delete_artist_ps.setString(1, artistName);
             delete_artist_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in deleteArtist: " + e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -135,7 +132,7 @@ public class DataSource {
                 //System.out.println(results.getString("Name"));
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in listAllArtistNames: " + e);
+            System.out.println(e.getMessage());
         }
         return allArtists;
     }
@@ -149,10 +146,11 @@ public class DataSource {
             ResultSet results = returnArtist_ps.executeQuery();
             returnedArtist = new Artist(results.getInt(COLUMN_ARTISTS_ARTIST_ID), results.getString(COLUMN_ARTISTS_ARTIST_NAME));
         } catch (SQLException e) {
-            System.out.println("SQL Error in returnArtist: " + e);
+            System.out.println(e.getMessage());
         }
         return returnedArtist;
     }
+
 
     public int artistNameToArtistID(String artistName) {
         int artistID = 0;;
@@ -162,7 +160,7 @@ public class DataSource {
             ResultSet results = artist_Name_To_ArtistID_ps.executeQuery();
             artistID = results.getInt(COLUMN_ARTISTS_ARTIST_ID);
         } catch (SQLException e) {
-            System.out.println("SQL Error in artistNameToArtistID: " + e);
+            System.out.println(e.getMessage());
         }
         return artistID;
     }
@@ -182,7 +180,7 @@ public class DataSource {
                 generatedKey = keys_rs.getInt(1);
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in insertAlbum: " + e);
+            System.out.println(e.getMessage());
         }
         return generatedKey;
     }
@@ -197,11 +195,11 @@ public class DataSource {
             update_artist_ps.setInt(4, artistID);
             update_artist_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in updateAlbum: " + e);
+            System.out.println(e.getMessage());
         }
     }
 
-    //
+
     public void updateAlbum(int artistID, String oldTitle, String newTitle) {
         try (Connection conn = this.connect()) {
             PreparedStatement update_artist_ps = conn.prepareStatement(UPDATE_ALBUM_TITLE_ONLY);
@@ -210,9 +208,10 @@ public class DataSource {
             update_artist_ps.setInt(3, artistID);
             update_artist_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in updateAlbum: " + e);
+            System.out.println(e.getMessage());
         }
     }
+
 
     public void deleteAlbum(int artistID, String albumTitle) {
         try (Connection conn = this.connect()) {
@@ -221,7 +220,7 @@ public class DataSource {
             delete_album_ps.setInt(2, artistID);
             delete_album_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in deleteAlbum: " + e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -252,7 +251,7 @@ public class DataSource {
                         results.getString(COLUMN_ALBUMS_LOCATION)));
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in artistsAlbums: " + e);
+            System.out.println(e.getMessage());
         }
         return albumsOfArtist;
     }
@@ -269,11 +268,10 @@ public class DataSource {
                 //System.out.println(results.getString("Name"));
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in listAllAlbumNames: " + e);
+            System.out.println(e.getMessage());
         }
         return allAlbumNames;
     }
-
 
 
 
@@ -285,7 +283,7 @@ public class DataSource {
             ResultSet results = album_Name_To_AlbumID_ps.executeQuery();
             albumID = results.getInt(COLUMN_ALBUMS_ALBUM_ID);
         } catch (SQLException e) {
-            System.out.println("SQL Error in albumNameToAlbumID: " + e);
+            System.out.println(e.getMessage());
         }
         return albumID;
     }
@@ -303,7 +301,7 @@ public class DataSource {
                 generatedKey = keys_rs.getInt(1);;
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in insertSong: " + e);
+            System.out.println(e.getMessage());
         }
         return generatedKey;
     }
@@ -320,9 +318,10 @@ public class DataSource {
             update_artist_ps.setInt(3, albumID);
             update_artist_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in updateSong: " + e);
+            System.out.println(e.getMessage());
         }
     }
+
 
     public void deleteSong(int albumID, String songTitle) {
         try (Connection conn = this.connect()) {
@@ -331,7 +330,7 @@ public class DataSource {
             delete_song_ps.setInt(2, albumID);
             delete_song_ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("SQL Error in deleteSong: " + e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -347,7 +346,7 @@ public class DataSource {
                 allSongNames.add(results.getString(COLUMN_SONGS_TITLE));
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in listAllSongNames: " + e);
+            System.out.println(e.getMessage());
         }
         return allSongNames;
     }
@@ -367,12 +366,10 @@ public class DataSource {
                         ));
             }
         } catch (SQLException e) {
-            System.out.println("SQL Error in albumSongs: " + e);
+            System.out.println(e.getMessage());
         }
         return songsOfAlbum;
     }
-
-
 
 }
 

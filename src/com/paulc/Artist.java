@@ -113,10 +113,9 @@ public class Artist {
     }
 
 
-    // Validation for user input.
-    // Very basic at the moment but extracted to a separate method to make sure it will only need to be updated in one place.
-    private static boolean artistPromptInputValid(String albumName){
-        return (!(albumName.equals("") || albumName.equals(" ") || albumName.equals("  ") || albumName.contains("   ")));
+    // Very basic at the moment but extracted to a separate method to make sure it can be changed easily.2
+    private static boolean artistPromptInputValid(String artistName){
+        return (!(artistName.equals("") || artistName.contains("   ") || (artistName.contains("@") || artistName.contains("#"))));
     }
 
 
@@ -124,20 +123,20 @@ public class Artist {
         String artistName = null;
         try{
             System.out.println("Please enter the name of the new Artist: ");
-            artistName = br.readLine();
+            artistName = br.readLine().trim();
 
             while(!Artist.artistPromptInputValid(artistName)){
                 System.out.println("Please enter a valid name for the Artist: ");
-                artistName = br.readLine();
+                artistName = br.readLine().trim();
             }
             if (Artist.artistExist(artistName)){
                 while(Artist.artistExist(artistName)){
                     System.out.println("'" + artistName + "' is already the library, please enter a new Artist");
-                    artistName = br.readLine();
+                    artistName = br.readLine().trim();
                 }
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for New Artist name: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return artistName;
     }
@@ -150,11 +149,11 @@ public class Artist {
             artistName = br.readLine();
             while(!Artist.artistExist(artistName)){
                 System.out.println("'" + artistName + "' isn't an Artist in the library, please enter an Artist in the library");
-                artistName = br.readLine();
+                artistName = br.readLine().trim();
 
             }
         }catch(IOException e) {
-            System.out.println("Error prompting for Existing Artist name: " +e.getMessage());
+            System.out.println(e.getMessage());
         }
         return artistName;
     }
@@ -165,7 +164,7 @@ public class Artist {
         ArrayList<String> allArtistsNames = ds.listAllArtistNames();
         boolean artistExists = false;
         for(String artistNameInLibrary: allArtistsNames){
-            if(artistNameInLibrary.equals(artistName)){
+            if(artistNameInLibrary.toLowerCase().equals(artistName.toLowerCase())){
                 artistExists = true;
             }
         }
@@ -186,7 +185,7 @@ public class Artist {
             br.close();
         }
         catch(IOException e) {
-            System.out.println("Problem closing Artist's stream: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
