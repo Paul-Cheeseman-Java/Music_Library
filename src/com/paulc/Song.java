@@ -31,31 +31,35 @@ public class Song {
     public static boolean addSong(int albumID){
         boolean addAnotherSong = false;
         String newSongName = Song.promptForNewSongTitle(albumID);
-
         while(!newSongName.isEmpty()){
             DataSource ds = new DataSource();
             ds.insertSong(albumID, newSongName);
             newSongName = Song.promptForNewSongTitle(albumID);
             addAnotherSong = true;
         }
-        if (newSongName.isEmpty()){
-            addAnotherSong = false;
-        }
         return addAnotherSong;
     }
 
+
     public static void updateSong(){
         int newSongsArtistID = Artist.artistNameToArtistID(Artist.promptForExistingArtist());
-        int newSongsAlbumID = Album.albumNameToAlbumID(Album.promptForExistingAlbumTitle(newSongsArtistID));
-        String oldTitle = Song.promptForExistingSong(newSongsAlbumID);
-        String newTitle = Song.promptForNewSongTitle(newSongsAlbumID);
-
-        if (newTitle.isEmpty()){
-            newTitle = oldTitle;
+        String newSongAlbumName = Album.promptForExistingAlbumTitle(newSongsArtistID);
+        int newSongsAlbumID = Album.albumNameToAlbumID(newSongAlbumName);
+        if (Album.albumHasNoSongs(newSongAlbumName)){
+            System.out.println("'" +newSongAlbumName + "' doesn't currently have any songs in it to update");
         }
-        DataSource ds = new DataSource();
-        ds.updateSong(newSongsAlbumID, oldTitle, newTitle);
+        else{
+            String oldTitle = Song.promptForExistingSong(newSongsAlbumID);
+            String newTitle = Song.promptForNewSongTitle(newSongsAlbumID);
+            if (newTitle.isEmpty()){
+                newTitle = oldTitle;
+            }
+            DataSource ds = new DataSource();
+            ds.updateSong(newSongsAlbumID, oldTitle, newTitle);
+        }
+
     }
+
 
 
     public static void deleteSong(){
@@ -66,7 +70,6 @@ public class Song {
     }
 
 
-    // Validation for user input (in this class space is OK as its a termination character for an inout loop).
     // Very basic at the moment but extracted to a separate method to make sure it will only need to be updated in one place.
     private static boolean songPromptInputValid(String songTitle){
         return (!(songTitle.contains("@") || songTitle.contains("#")));
@@ -77,19 +80,16 @@ public class Song {
         String songTitle = null;
         try{
             String albumName = Album.returnAlbum(albumID).getTitle();
-            System.out.println("Please enter the name of song (or hit return to exit): ");
+            System.out.println("Please enter the new song (or hit return to exit): ");
             songTitle = br.readLine().trim();
-            //if an empty line, abort
-            if (songTitle != "" || songTitle != " " || songTitle != "  " || !songTitle.contains("   ")){
-                //Get valid input if first album input existed
-                while(!Song.songPromptInputValid(songTitle)){
-                    System.out.println("Please enter a valid title for the song (or hit return to exit): ");
-                    songTitle = br.readLine().trim();
-                }
-                while(Song.songExist(songTitle, albumName)){
-                    System.out.println("'" + songTitle + "' is already the library for " +albumName +", please enter a new song:");
-                    songTitle = br.readLine().trim();
-                }
+
+            while(!Song.songPromptInputValid(songTitle)){
+                System.out.println("Please enter a valid title for the song (or hit return to exit): ");
+                songTitle = br.readLine().trim();
+            }
+            while(Song.songExist(songTitle, albumName)){
+                System.out.println("'" + songTitle + "' is already the library for " +albumName +", please enter a new song:");
+                songTitle = br.readLine().trim();
             }
         }catch(IOException e) {
             System.out.println(e.getMessage());
@@ -102,10 +102,10 @@ public class Song {
         String songTitle = null;
         try{
             String songAlbum = Album.returnAlbum(album_ID).getTitle();
-            System.out.println("Please enter the name of a song on '" +songAlbum+ "': ");
+            System.out.println("Please enter the name of a song on '" + songAlbum+ "': ");
             songTitle = br.readLine().trim();
             while(!Song.songExist(songTitle, songAlbum)){
-                System.out.println("'" + songTitle + "' is not on '" +songAlbum+ ", please enter an song in the library:");
+                System.out.println("'" + songTitle + "' is not a song on '" +songAlbum+ "' Please enter a song on the album: ");
                 songTitle = br.readLine().trim();
             }
         }catch(IOException e) {
@@ -122,6 +122,7 @@ public class Song {
         for(Song songInAlbum: allSongs){
             if(songInAlbum.getTitle().toLowerCase().equals(songName.toLowerCase())){
                 existingSong = true;
+                break;
             }
         }
         return existingSong;
@@ -135,6 +136,5 @@ public class Song {
             System.out.println(e.getMessage());
         }
     }
-
 
 }

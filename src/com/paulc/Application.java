@@ -7,9 +7,8 @@ public class Application {
 
 
     public static void start(){
-        // Separate in case more initialization code required in future,
+        // Separate in case more initialization code required in future.
         Application.mainMenu();
-
     }
 
 
@@ -73,7 +72,7 @@ public class Application {
                 System.out.println("    ------------------------------");
                 System.out.println("    1 - List all artists");
                 System.out.println("    2 - List all albums by an artist");
-                System.out.println("    3 - List albums and songs by an artist");
+                System.out.println("    3 - List all albums and songs by an artist");
                 System.out.println("    0 - Main Menu ");
                 System.out.println("    ------------------------------");
                 System.out.println("  ");
@@ -116,7 +115,7 @@ public class Application {
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
                 addMenuControl = sc.nextInt();
-                int albumID = 0;
+                int albumID;
                 switch (addMenuControl){
                     case 1:
                         albumID = Album.addAlbum(Artist.addArtistReturnID());

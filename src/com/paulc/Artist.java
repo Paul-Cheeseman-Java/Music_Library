@@ -22,9 +22,6 @@ public class Artist {
         return this.name;
     }
 
-    public int getID(){
-        return this.id;
-    }
 
 
     public static void deleteArtist(){
@@ -33,16 +30,10 @@ public class Artist {
         ds.deleteArtist(artistName);
     }
 
-
-    public static ArrayList<String> returnArtistsAlbumNames(){
+    public static boolean artistHasNoAlbums(String artistName){
         DataSource ds = new DataSource();
-        String artist = Artist.promptForExistingArtist();
-        ArrayList<String> artistsAlbumNames = new ArrayList<>();
-        ArrayList<Album> artistsAlbums = ds.artistsAlbums(artist);
-        for (Album album : artistsAlbums ){
-            artistsAlbumNames.add(album.getTitle());
-        }
-        return artistsAlbumNames;
+        ArrayList<Album> allTheAlbums = ds.artistsAlbums(artistName);
+        return allTheAlbums.isEmpty();
     }
 
 
@@ -51,9 +42,9 @@ public class Artist {
         String artist = Artist.promptForExistingArtist();
         ArrayList<Album> artistsAlbums = ds.artistsAlbums(artist);
         if (artistsAlbums.isEmpty()){
-            System.out.println("Artist: " + artist + " doesn't have any albums in the library");
+            System.out.println("'" + artist + "' doesn't have any albums in the library");
         } else {
-            System.out.println("Artist: " + artist + " has the following Albums");
+            System.out.println("'" + artist + "' has the following Albums");
             for(Album album: artistsAlbums) {
                 System.out.println(album.getTitle());
             }
@@ -64,22 +55,22 @@ public class Artist {
     public static void listArtistsAlbumsAndSongs(){
         DataSource ds = new DataSource();
         String artist = Artist.promptForExistingArtist();
-        ArrayList<Album> artistsAlbums = ds.artistsAlbums(artist);
-        if (artistsAlbums.isEmpty()){
-            System.out.println("Artist: " + artist + " doesn't have any albums in the library");
+        ArrayList<Album> artistsAlbumsAndSongs = ds.artistsAlbums(artist);
+        if (artistsAlbumsAndSongs.isEmpty()){
+            System.out.println("'" + artist + "' doesn't have any albums in the library");
         } else {
-            System.out.println("Artist: " + artist + " has the following Albums:");
-            for(Album album: artistsAlbums) {
-                System.out.println("        Album " + album.getTitle() + " has the following songs:");
+            System.out.println("'" + artist + "' has the following Albums:");
+            for(Album album: artistsAlbumsAndSongs) {
+                System.out.println("        - " + album.getTitle() + " has the following songs:");
                 album.listAllSongs();
             }
         }
     }
 
+
     public static int addArtistReturnID(){
         DataSource ds = new DataSource();
-        int generatedKey = ds.insertArtist(Artist.promptForNewArtist());
-        return generatedKey;
+        return ds.insertArtist(Artist.promptForNewArtist());
     }
 
     public static int returnExistingArtistID(){
@@ -108,15 +99,15 @@ public class Artist {
 
     public static int artistNameToArtistID(String artistName){
         DataSource ds = new DataSource();
-        int newArtistDBKey = ds.artistNameToArtistID(artistName);
-        return newArtistDBKey;
+        return ds.artistNameToArtistID(artistName);
     }
 
 
-    // Very basic at the moment but extracted to a separate method to make sure it can be changed easily.2
+    // Very basic at the moment but extracted to a separate method to make sure it can be changed easily.
     private static boolean artistPromptInputValid(String artistName){
         return (!(artistName.equals("") || artistName.contains("   ") || (artistName.contains("@") || artistName.contains("#"))));
     }
+
 
 
     public static String promptForNewArtist() {
@@ -166,6 +157,7 @@ public class Artist {
         for(String artistNameInLibrary: allArtistsNames){
             if(artistNameInLibrary.toLowerCase().equals(artistName.toLowerCase())){
                 artistExists = true;
+                break;
             }
         }
         return artistExists;
@@ -180,6 +172,7 @@ public class Artist {
         }
     }
 
+
     public static void closeStream(){
         try{
             br.close();
@@ -188,6 +181,5 @@ public class Artist {
             System.out.println(e.getMessage());
         }
     }
-
 
 }

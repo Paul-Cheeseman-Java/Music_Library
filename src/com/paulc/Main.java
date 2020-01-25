@@ -1,11 +1,11 @@
 package com.paulc;
 
-
 public class Main {
 
     public static void main(String[] args) {
         Application.start();
-        //DataSource ds = new DataSource();
-        //ds.displayQuery();
+
+        //System.out.println(Album.albumHasNoSongs("New bods alb"));
+
     }
 }
