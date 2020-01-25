@@ -1,7 +1,10 @@
 Album_ID,Artist_ID,Title,Location
-1,1,Pan Pipes Percy - Album 1,C:\
-2,1,Pan Pipes Percy - Album 2,C:\New\
-3,1,Pan Pipes Percy - Album 3,C:\New\
-4,2,Music Man - Album 1,C:\New\
-5,2,Music Man - Album 2,C:\New\
-6,3,Musical Pete - Album 1,C:\New\
+1,1,Pan Pipes Percy - Album 1,C:\default\
+2,1,Pan Pipes Percy - Album 2,C:\default\
+3,1,Pan Pipes Percy - Album 3,C:\default\
+4,2,Metal Mavis - Album 1,D:\default\
+5,2,Metal Mavis - Album 2,D:\default\
+6,3,Classical Colin - Album 1,E:\default\
+7,4,Rave Ralp - Album 1,C:\default\
+8,4,Rave Ralp - Album 2,C:\default\
+9,4,Rave Ralp - Album 3,C:\default\
