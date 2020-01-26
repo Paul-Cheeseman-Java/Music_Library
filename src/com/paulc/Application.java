@@ -5,10 +5,8 @@ import java.util.Scanner;
 
 public class Application {
 
-
-    public static void start(){
-        // Separate in case more initialization code required in future.
-        Application.mainMenu();
+    public static void main(String[] args) {
+       Application.mainMenu();
     }
 
 
@@ -23,15 +21,15 @@ public class Application {
         int mainMenuControl = 1;
         try{
             while(mainMenuControl > 0) {
-                System.out.println("    ------------------------------");
-                System.out.println("    ------  Music Library  -------");
-                System.out.println("    ------------------------------");
+                System.out.println("    *******************************************");
+                System.out.println("    ***********   Music Library   *************");
+                System.out.println("    *******************************************");
                 System.out.println("    1 - List information from library");
                 System.out.println("    2 - Add information to library");
                 System.out.println("    3 - Update information in library");
                 System.out.println("    4 - Remove information from library");
                 System.out.println("    0 - Exit ");
-                System.out.println("    ------------------------------");
+                System.out.println("    *******************************************");
                 System.out.println("  ");
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
@@ -67,14 +65,14 @@ public class Application {
         int listMenuControl = 1;
         try{
             while(listMenuControl > 0) {
-                System.out.println("    ------------------------------");
-                System.out.println("    ------   List Options  -------");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
+                System.out.println("    ------------   List Options  --------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("    1 - List all artists");
                 System.out.println("    2 - List all albums by an artist");
                 System.out.println("    3 - List all albums and songs by an artist");
                 System.out.println("    0 - Main Menu ");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("  ");
 
                 System.out.println("Enter your choice ");
@@ -103,14 +101,14 @@ public class Application {
         int addMenuControl = 1;
         try{
             while(addMenuControl > 0) {
-                System.out.println("    ------------------------------");
-                System.out.println("    --------  Add Options --------");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
+                System.out.println("    -------------   Add Options  --------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("    1 - Add a new Artist & Album");
                 System.out.println("    2 - Add a new Album for an existing Artist");
                 System.out.println("    3 - Add a song to an Album");
                 System.out.println("    0 - Main Menu ");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("  ");
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
@@ -146,14 +144,14 @@ public class Application {
         int updateMenuControl = 1;
         try{
             while(updateMenuControl > 0) {
-                System.out.println("    ------------------------------");
-                System.out.println("    ------  Update Options  ------");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
+                System.out.println("    -----------   Update Options   ------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("    1 - Update artist info");
                 System.out.println("    2 - Update album info");
                 System.out.println("    3 - Update song info");
                 System.out.println("    0 - Main Menu ");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("  ");
 
                 System.out.println("Enter your choice ");
@@ -182,14 +180,14 @@ public class Application {
         int removeMenuControl = 1;
         try{
             while(removeMenuControl > 0) {
-                System.out.println("    ------------------------------");
-                System.out.println("    ------  Remove Options  ------");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
+                System.out.println("    -----------   Remove Options   ------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("    1 - Remove an artist");
                 System.out.println("    2 - Remove and album");
                 System.out.println("    3 - Remove a song");
                 System.out.println("    0 - Main Menu ");
-                System.out.println("    ------------------------------");
+                System.out.println("    -------------------------------------------");
                 System.out.println("  ");
                 System.out.println("Enter your choice ");
                 Scanner sc = new Scanner(System.in);
@@ -211,5 +209,4 @@ public class Application {
             Application.RemoveMenu();
         }
     }
-
 }

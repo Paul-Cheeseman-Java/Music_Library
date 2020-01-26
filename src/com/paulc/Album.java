@@ -219,7 +219,7 @@ public class Album {
         DataSource ds = new DataSource();
         ArrayList<Song> allTheSongs = ds.albumSongs(this.title);
         for (Song theSong : allTheSongs){
-            System.out.println("              Song: " + theSong.getTitle());
+            System.out.println("              " + theSong.getTitle());
         }
     }
 

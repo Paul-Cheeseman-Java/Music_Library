@@ -1,6 +1,7 @@
 package com.paulc;
 
 import org.sqlite.SQLiteConfig;
+
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -78,7 +79,6 @@ public class DataSource {
         }
         return conn;
     }
-
 
     public int insertArtist(String artistName) {
         int generatedKey = 0;
@@ -326,6 +326,7 @@ public class DataSource {
         }
         return songsOfAlbum;
     }
+
 
 }
 
